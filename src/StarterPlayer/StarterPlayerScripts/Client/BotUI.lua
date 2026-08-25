@@ -18,6 +18,7 @@ local BotUI = {}
 
 function BotUI.Init()
 	local holder, titleLabel = MenuUI.AddSection(Localization.Get("BotSectionTitle"))
+	local grid = MenuUI.CreateGridHolder(holder, 30)
 	local buttons = {}
 
 	local function refreshHighlight(count: number)
@@ -27,7 +28,7 @@ function BotUI.Init()
 	end
 
 	for _, count in COUNTS do
-		local button = MenuUI.CreateButton(holder, Localization.Get(COUNT_LABEL_KEYS[count]))
+		local button = MenuUI.CreateGridButton(grid, Localization.Get(COUNT_LABEL_KEYS[count]))
 		buttons[count] = button
 
 		button.MouseButton1Click:Connect(function()

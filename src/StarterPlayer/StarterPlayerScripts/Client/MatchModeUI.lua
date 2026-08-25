@@ -20,6 +20,7 @@ local MatchModeUI = {}
 
 function MatchModeUI.Init()
 	local holder, titleLabel = MenuUI.AddSection(Localization.Get("MatchModeTitle"))
+	local grid = MenuUI.CreateGridHolder(holder, 30)
 	local buttons = {}
 
 	local function refreshHighlight(mode: string)
@@ -29,7 +30,7 @@ function MatchModeUI.Init()
 	end
 
 	for _, mode in MODES do
-		local button = MenuUI.CreateButton(holder, Localization.Get(MODE_LABEL_KEYS[mode]))
+		local button = MenuUI.CreateGridButton(grid, Localization.Get(MODE_LABEL_KEYS[mode]))
 		buttons[mode] = button
 
 		button.MouseButton1Click:Connect(function()

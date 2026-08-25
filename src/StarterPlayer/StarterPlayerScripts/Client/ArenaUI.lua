@@ -21,6 +21,7 @@ local ArenaUI = {}
 
 function ArenaUI.Init()
 	local holder, titleLabel = MenuUI.AddSection(Localization.Get("ArenaSectionTitle"))
+	local grid = MenuUI.CreateGridHolder(holder, 34)
 	local buttons = {}
 
 	local function refreshHighlight(arenaName: string)
@@ -30,7 +31,7 @@ function ArenaUI.Init()
 	end
 
 	for _, arenaName in ARENAS do
-		local button = MenuUI.CreateButton(holder, Localization.Get(ARENA_LABEL_KEYS[arenaName]))
+		local button = MenuUI.CreateGridButton(grid, Localization.Get(ARENA_LABEL_KEYS[arenaName]))
 		buttons[arenaName] = button
 
 		button.MouseButton1Click:Connect(function()
