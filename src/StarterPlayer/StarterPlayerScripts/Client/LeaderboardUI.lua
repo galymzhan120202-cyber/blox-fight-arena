@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local MenuUI = require(script.Parent.MenuUI)
 local Theme = require(script.Parent.UITheme)
+local Localization = require(script.Parent.Localization)
 local RankTiers = require(ReplicatedStorage.Modules.Data.RankTiers)
 
 local RequestLeaderboardEvent = ReplicatedStorage.RemoteEvents:WaitForChild("RequestLeaderboard")
@@ -10,7 +11,7 @@ local LeaderboardDataEvent = ReplicatedStorage.RemoteEvents:WaitForChild("Leader
 local LeaderboardUI = {}
 
 function LeaderboardUI.Init()
-	local holder = MenuUI.AddSection("Рейтинг", "Дүкен")
+	local holder, titleLabel = MenuUI.AddSection(Localization.Get("LeaderboardTitle"), "Дүкен")
 
 	local youLabel = Instance.new("TextLabel")
 	youLabel.Size = UDim2.new(1, 0, 0, 18)
@@ -19,11 +20,11 @@ function LeaderboardUI.Init()
 	youLabel.TextSize = 13
 	youLabel.TextColor3 = Theme.Accent
 	youLabel.TextXAlignment = Enum.TextXAlignment.Left
-	youLabel.Text = "Сіздің дәрежеңіз: —"
+	youLabel.Text = "—"
 	youLabel.LayoutOrder = -1
 	youLabel.Parent = holder
 
-	local refreshButton = MenuUI.CreateButton(holder, "Жаңарту")
+	local refreshButton = MenuUI.CreateButton(holder, Localization.Get("LeaderboardRefresh"))
 
 	local listLabel = Instance.new("TextLabel")
 	listLabel.Size = UDim2.new(1, 0, 0, 0)
@@ -35,20 +36,21 @@ function LeaderboardUI.Init()
 	listLabel.TextXAlignment = Enum.TextXAlignment.Left
 	listLabel.TextYAlignment = Enum.TextYAlignment.Top
 	listLabel.TextWrapped = true
-	listLabel.Text = "Жүктелуде..."
+	listLabel.Text = Localization.Get("LeaderboardLoading")
 	listLabel.Parent = holder
 
-	refreshButton.MouseButton1Click:Connect(function()
-		listLabel.Text = "Жүктелуде..."
-		RequestLeaderboardEvent:FireServer()
-	end)
+	local lastPayload = nil
 
-	LeaderboardDataEvent.OnClientEvent:Connect(function(payload)
-		youLabel.Text = string.format("Сіздің дәрежеңіз: %s (%d RP)", payload.You.Tier, payload.You.RankPoints)
+	local function render()
+		if not lastPayload then
+			return
+		end
 
-		local entries = payload.Top
+		youLabel.Text = Localization.Get("LeaderboardYou", lastPayload.You.Tier, lastPayload.You.RankPoints)
+
+		local entries = lastPayload.Top
 		if #entries == 0 then
-			listLabel.Text = "Деректер жоқ."
+			listLabel.Text = Localization.Get("LeaderboardEmpty")
 			return
 		end
 
@@ -56,13 +58,33 @@ function LeaderboardUI.Init()
 		for index, entry in entries do
 			table.insert(
 				lines,
-				string.format("%d. %s — %s (%d RP)", index, entry.Name, RankTiers.GetTier(entry.RankPoints), entry.RankPoints)
+				Localization.Get("LeaderboardEntry", index, entry.Name, RankTiers.GetTier(entry.RankPoints), entry.RankPoints)
 			)
 		end
 		listLabel.Text = table.concat(lines, "\n")
+	end
+
+	refreshButton.MouseButton1Click:Connect(function()
+		listLabel.Text = Localization.Get("LeaderboardLoading")
+		RequestLeaderboardEvent:FireServer()
+	end)
+
+	LeaderboardDataEvent.OnClientEvent:Connect(function(payload)
+		lastPayload = payload
+		render()
 	end)
 
 	RequestLeaderboardEvent:FireServer()
+
+	Localization.OnChanged(function()
+		titleLabel.Text = string.upper(Localization.Get("LeaderboardTitle"))
+		refreshButton.Text = Localization.Get("LeaderboardRefresh")
+		if lastPayload then
+			render()
+		else
+			listLabel.Text = Localization.Get("LeaderboardLoading")
+		end
+	end)
 end
 
 return LeaderboardUI

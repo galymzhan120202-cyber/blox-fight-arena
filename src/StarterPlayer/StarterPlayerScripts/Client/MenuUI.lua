@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 
 local Theme = require(script.Parent.UITheme)
+local Localization = require(script.Parent.Localization)
 
 local MenuUI = {}
 
@@ -12,6 +13,7 @@ local sectionOrder = 0
 local activeTab = "Ойын"
 
 local TABS = { "Ойын", "Дүкен" }
+local TAB_LABEL_KEYS = { ["Ойын"] = "TabGame", ["Дүкен"] = "TabShop" }
 
 local function setActiveTab(tabName: string)
 	activeTab = tabName
@@ -61,7 +63,7 @@ function MenuUI.Init()
 		button.TextColor3 = Theme.Text
 		button.Font = Theme.TitleFont
 		button.TextSize = 13
-		button.Text = tabName
+		button.Text = Localization.Get(TAB_LABEL_KEYS[tabName])
 		button.AutoButtonColor = false
 		button.LayoutOrder = index
 		button.Parent = tabBar
@@ -97,9 +99,15 @@ function MenuUI.Init()
 	layout.Parent = scroller
 
 	setActiveTab(activeTab)
+
+	Localization.OnChanged(function()
+		for tabName, button in tabButtons do
+			button.Text = Localization.Get(TAB_LABEL_KEYS[tabName])
+		end
+	end)
 end
 
-function MenuUI.AddSection(title: string, tabName: string?): Frame
+function MenuUI.AddSection(title: string, tabName: string?): (Frame, TextLabel)
 	tabName = tabName or "Ойын"
 	sectionOrder += 1
 
@@ -156,7 +164,7 @@ function MenuUI.AddSection(title: string, tabName: string?): Frame
 	innerLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	innerLayout.Parent = buttonHolder
 
-	return buttonHolder
+	return buttonHolder, titleLabel
 end
 
 function MenuUI.CreateButton(parent: Frame, text: string): TextButton

@@ -1,20 +1,21 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local MenuUI = require(script.Parent.MenuUI)
+local Localization = require(script.Parent.Localization)
 
 local SetGameModeEvent = ReplicatedStorage.RemoteEvents:WaitForChild("SetGameMode")
 local GameModeChangedEvent = ReplicatedStorage.RemoteEvents:WaitForChild("GameModeChanged")
 
 local MODES = { "Random", "Classic" }
-local MODE_LABELS = {
-	Random = "Random (авто ауысады)",
-	Classic = "Classic (тұрақты)",
+local MODE_LABEL_KEYS = {
+	Random = "WeaponModeRandom",
+	Classic = "WeaponModeClassic",
 }
 
 local GameModeUI = {}
 
 function GameModeUI.Init()
-	local holder = MenuUI.AddSection("Қару режимі")
+	local holder, titleLabel = MenuUI.AddSection(Localization.Get("WeaponModeTitle"))
 	local buttons = {}
 
 	local function refreshHighlight(mode: string)
@@ -24,7 +25,7 @@ function GameModeUI.Init()
 	end
 
 	for _, mode in MODES do
-		local button = MenuUI.CreateButton(holder, MODE_LABELS[mode])
+		local button = MenuUI.CreateButton(holder, Localization.Get(MODE_LABEL_KEYS[mode]))
 		buttons[mode] = button
 
 		button.MouseButton1Click:Connect(function()
@@ -34,6 +35,13 @@ function GameModeUI.Init()
 
 	GameModeChangedEvent.OnClientEvent:Connect(refreshHighlight)
 	refreshHighlight("Random")
+
+	Localization.OnChanged(function()
+		titleLabel.Text = string.upper(Localization.Get("WeaponModeTitle"))
+		for mode, button in buttons do
+			button.Text = Localization.Get(MODE_LABEL_KEYS[mode])
+		end
+	end)
 end
 
 return GameModeUI

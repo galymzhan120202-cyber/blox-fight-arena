@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Theme = require(script.Parent.UITheme)
+local Localization = require(script.Parent.Localization)
 
 local SetRoundActiveEvent = ReplicatedStorage.RemoteEvents:WaitForChild("SetRoundActive")
 local RoundChangedEvent = ReplicatedStorage.RemoteEvents:WaitForChild("RoundChanged")
@@ -30,7 +31,7 @@ function RoundUI.Init()
 	button.TextColor3 = Color3.fromRGB(15, 20, 15)
 	button.Font = Theme.TitleFont
 	button.TextSize = 16
-	button.Text = "Раундты бастау"
+	button.Text = Localization.Get("RoundStart")
 	button.AutoButtonColor = false
 	button.Parent = screenGui
 
@@ -40,23 +41,28 @@ function RoundUI.Init()
 
 	local roundActive = false
 
+	local function applyState()
+		if roundActive then
+			button.Text = Localization.Get("RoundStop")
+			button.BackgroundColor3 = STOP_COLOR
+			button.TextColor3 = Color3.fromRGB(255, 245, 245)
+		else
+			button.Text = Localization.Get("RoundStart")
+			button.BackgroundColor3 = START_COLOR
+			button.TextColor3 = Color3.fromRGB(15, 20, 15)
+		end
+	end
+
 	button.MouseButton1Click:Connect(function()
 		SetRoundActiveEvent:FireServer(not roundActive)
 	end)
 
 	RoundChangedEvent.OnClientEvent:Connect(function(active: boolean)
 		roundActive = active
-
-		if active then
-			button.Text = "Раунд жүріп жатыр — тоқтату"
-			button.BackgroundColor3 = STOP_COLOR
-			button.TextColor3 = Color3.fromRGB(255, 245, 245)
-		else
-			button.Text = "Раундты бастау"
-			button.BackgroundColor3 = START_COLOR
-			button.TextColor3 = Color3.fromRGB(15, 20, 15)
-		end
+		applyState()
 	end)
+
+	Localization.OnChanged(applyState)
 end
 
 return RoundUI

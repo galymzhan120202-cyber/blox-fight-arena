@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Theme = require(script.Parent.UITheme)
+local Localization = require(script.Parent.Localization)
 
 local WeaponChangedEvent = ReplicatedStorage.RemoteEvents:WaitForChild("WeaponChanged")
 
@@ -37,7 +38,7 @@ function BottomHUD.Init()
 	weaponLabel.Font = Theme.TitleFont
 	weaponLabel.TextSize = 15
 	weaponLabel.TextColor3 = Theme.Warning
-	weaponLabel.Text = "Қару: —"
+	weaponLabel.Text = Localization.Get("WeaponLabelEmpty")
 	weaponLabel.LayoutOrder = 0
 	weaponLabel.Parent = container
 
@@ -73,9 +74,19 @@ function BottomHUD.Init()
 	hpLabel.ZIndex = 2
 	hpLabel.Parent = barTrack
 
+	local currentWeaponName: string? = nil
+
+	local function applyWeaponLabel()
+		weaponLabel.Text = currentWeaponName and Localization.Get("WeaponLabel", currentWeaponName)
+			or Localization.Get("WeaponLabelEmpty")
+	end
+
 	WeaponChangedEvent.OnClientEvent:Connect(function(weaponName: string)
-		weaponLabel.Text = "Қару: " .. weaponName
+		currentWeaponName = weaponName
+		applyWeaponLabel()
 	end)
+
+	Localization.OnChanged(applyWeaponLabel)
 
 	local function bindHumanoid(humanoid: Humanoid)
 		local function update()

@@ -8,4 +8,5 @@ return {
 	OwnedCosmetics = { Default = true },
 	EquippedSkin = "Default",
 	ClanName = nil,
+	Language = "kk",
 }

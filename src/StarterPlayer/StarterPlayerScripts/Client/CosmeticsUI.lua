@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local MenuUI = require(script.Parent.MenuUI)
+local Localization = require(script.Parent.Localization)
 local CosmeticsDatabase = require(ReplicatedStorage.Modules.Data.CosmeticsDatabase)
 
 local PurchaseSkinEvent = ReplicatedStorage.RemoteEvents:WaitForChild("PurchaseSkin")
@@ -12,9 +13,9 @@ local SKIN_ORDER = { "Default", "Crimson", "Azure", "Toxic", "Gold", "Void" }
 local CosmeticsUI = {}
 
 function CosmeticsUI.Init()
-	local holder = MenuUI.AddSection("Дүкен", "Дүкен")
+	local holder, titleLabel = MenuUI.AddSection(Localization.Get("ShopSectionTitle"), "Дүкен")
 
-	local coinsLabel = MenuUI.CreateButton(holder, "Coins: 0")
+	local coinsLabel = MenuUI.CreateButton(holder, "")
 	coinsLabel.Active = false
 	coinsLabel.AutoButtonColor = false
 
@@ -22,7 +23,7 @@ function CosmeticsUI.Init()
 	local state = { Coins = 0, Owned = {}, Equipped = "Default" }
 
 	local function refresh()
-		coinsLabel.Text = string.format("Coins: %d", state.Coins)
+		coinsLabel.Text = Localization.Get("CoinsLabel", state.Coins)
 
 		for skinId, button in buttons do
 			local skin = CosmeticsDatabase[skinId]
@@ -30,13 +31,13 @@ function CosmeticsUI.Init()
 			local equipped = state.Equipped == skinId
 
 			if equipped then
-				button.Text = string.format("%s — киілген", skin.Name)
+				button.Text = Localization.Get("SkinEquipped", skin.Name)
 				MenuUI.SetSelected(button, true)
 			elseif owned then
-				button.Text = string.format("%s — кию", skin.Name)
+				button.Text = Localization.Get("SkinWear", skin.Name)
 				MenuUI.SetSelected(button, false)
 			else
-				button.Text = string.format("%s — %d Coins", skin.Name, skin.Price)
+				button.Text = Localization.Get("SkinBuy", skin.Name, skin.Price)
 				MenuUI.SetSelected(button, false)
 			end
 		end
@@ -64,6 +65,11 @@ function CosmeticsUI.Init()
 	end)
 
 	refresh()
+
+	Localization.OnChanged(function()
+		titleLabel.Text = string.upper(Localization.Get("ShopSectionTitle"))
+		refresh()
+	end)
 end
 
 return CosmeticsUI

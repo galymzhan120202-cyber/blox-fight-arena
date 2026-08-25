@@ -1,25 +1,26 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local MenuUI = require(script.Parent.MenuUI)
+local Localization = require(script.Parent.Localization)
 
 local SetArenaEvent = ReplicatedStorage.RemoteEvents:WaitForChild("SetArena")
 local ArenaChangedEvent = ReplicatedStorage.RemoteEvents:WaitForChild("ArenaChanged")
 
 local ARENAS = { "Classic", "Lava", "SkyIslands", "Frozen", "Desert", "Swamp", "NeonColosseum" }
-local ARENA_LABELS = {
-	Classic = "Классикалық",
-	Lava = "Лава шұңқыры",
-	SkyIslands = "Аспан аралдары",
-	Frozen = "Мұзды құрсау",
-	Desert = "Шөл дала",
-	Swamp = "Улы батпақ",
-	NeonColosseum = "Неон колизей",
+local ARENA_LABEL_KEYS = {
+	Classic = "ArenaClassic",
+	Lava = "ArenaLava",
+	SkyIslands = "ArenaSkyIslands",
+	Frozen = "ArenaFrozen",
+	Desert = "ArenaDesert",
+	Swamp = "ArenaSwamp",
+	NeonColosseum = "ArenaNeonColosseum",
 }
 
 local ArenaUI = {}
 
 function ArenaUI.Init()
-	local holder = MenuUI.AddSection("Арена")
+	local holder, titleLabel = MenuUI.AddSection(Localization.Get("ArenaSectionTitle"))
 	local buttons = {}
 
 	local function refreshHighlight(arenaName: string)
@@ -29,7 +30,7 @@ function ArenaUI.Init()
 	end
 
 	for _, arenaName in ARENAS do
-		local button = MenuUI.CreateButton(holder, ARENA_LABELS[arenaName])
+		local button = MenuUI.CreateButton(holder, Localization.Get(ARENA_LABEL_KEYS[arenaName]))
 		buttons[arenaName] = button
 
 		button.MouseButton1Click:Connect(function()
@@ -39,6 +40,13 @@ function ArenaUI.Init()
 
 	ArenaChangedEvent.OnClientEvent:Connect(refreshHighlight)
 	refreshHighlight("Classic")
+
+	Localization.OnChanged(function()
+		titleLabel.Text = string.upper(Localization.Get("ArenaSectionTitle"))
+		for arenaName, button in buttons do
+			button.Text = Localization.Get(ARENA_LABEL_KEYS[arenaName])
+		end
+	end)
 end
 
 return ArenaUI
