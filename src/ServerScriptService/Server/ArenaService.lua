@@ -12,6 +12,10 @@ local STONE_LIGHT = Color3.fromRGB(96, 100, 112)
 local ACCENT = Color3.fromRGB(86, 180, 255)
 local LAVA_GLOW = Color3.fromRGB(255, 90, 20)
 local ICE_COLOR = Color3.fromRGB(200, 220, 235)
+local SAND_COLOR = Color3.fromRGB(196, 164, 108)
+local POISON_GLOW = Color3.fromRGB(120, 255, 90)
+local NEON_MAGENTA = Color3.fromRGB(255, 60, 220)
+local NEON_CYAN = Color3.fromRGB(60, 230, 255)
 
 local BossService = require(script.Parent.BossService)
 local AdminService = require(script.Parent.AdminService)
@@ -200,6 +204,48 @@ local function startLavaVent(position: Vector3)
 	end)
 end
 
+local function startPoisonPool(position: Vector3)
+	local RADIUS = 5
+	local DAMAGE_PER_TICK = 4
+	local TICK = 1
+
+	local pool = newAnchored(
+		"PoisonPool",
+		Vector3.new(RADIUS * 2, 0.4, RADIUS * 2),
+		CFrame.new(position),
+		Enum.Material.Neon,
+		POISON_GLOW
+	)
+	pool.Shape = Enum.PartType.Cylinder
+	pool.CFrame = CFrame.new(position) * CFrame.Angles(0, 0, math.rad(90))
+	pool.CanCollide = false
+	pool.Transparency = 0.25
+
+	local light = Instance.new("PointLight")
+	light.Color = POISON_GLOW
+	light.Range = 10
+	light.Brightness = 2
+	light.Parent = pool
+
+	task.spawn(function()
+		while pool.Parent do
+			for _, player in Players:GetPlayers() do
+				local character = player.Character
+				local rootPart = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
+				local humanoid = character and character:FindFirstChild("Humanoid") :: Humanoid?
+				if rootPart and humanoid and humanoid.Health > 0 then
+					local flat = Vector2.new(rootPart.Position.X - position.X, rootPart.Position.Z - position.Z)
+					if flat.Magnitude <= RADIUS then
+						humanoid:TakeDamage(DAMAGE_PER_TICK)
+					end
+				end
+			end
+
+			task.wait(TICK)
+		end
+	end)
+end
+
 local function tuneLighting(ambient: Color3, outdoorAmbient: Color3, clockTime: number, fogEnd: number, atmosphereColor: Color3)
 	Lighting.Ambient = ambient
 	Lighting.OutdoorAmbient = outdoorAmbient
@@ -334,6 +380,113 @@ ARENA_PRESETS.Frozen = {
 	end,
 }
 
+ARENA_PRESETS.Desert = {
+	DisplayName = "Шөл дала",
+	Spawn = Vector3.new(0, 1, 26),
+	PickupPoints = pickupRing(26, 6),
+	Build = function()
+		local platform =
+			newAnchored("ArenaPlatform", Vector3.new(4, 110, 110), CFrame.new(0, -2, 0) * CFrame.Angles(0, 0, math.rad(90)), Enum.Material.Sand, SAND_COLOR)
+		platform.Shape = Enum.PartType.Cylinder
+
+		buildRing("EdgeGlow", 55, 56, Vector3.new(3, 0.4, 1), 0.3, Color3.fromRGB(255, 200, 110))
+
+		for index = 1, 6 do
+			local angle = (index / 6) * math.pi * 2
+			local x, z = math.cos(angle) * 32, math.sin(angle) * 32
+
+			local dune = newAnchored(
+				"Dune",
+				Vector3.new(12, 4, 12),
+				CFrame.new(x, 0, z),
+				Enum.Material.Sand,
+				Color3.fromRGB(180, 148, 96)
+			)
+			dune.Shape = Enum.PartType.Ball
+		end
+
+		for index = 1, 5 do
+			local angle = (index / 5) * math.pi * 2 + math.rad(36)
+			local x, z = math.cos(angle) * 16, math.sin(angle) * 16
+
+			newAnchored("CactusBody", Vector3.new(1.4, 6, 1.4), CFrame.new(x, 3, z), Enum.Material.Grass, Color3.fromRGB(70, 120, 60))
+			newAnchored("CactusArm", Vector3.new(0.8, 2.4, 0.8), CFrame.new(x + 1, 4, z), Enum.Material.Grass, Color3.fromRGB(70, 120, 60))
+		end
+
+		tuneLighting(Color3.fromRGB(120, 100, 70), Color3.fromRGB(180, 150, 100), 13.5, 250, Color3.fromRGB(230, 190, 130))
+	end,
+}
+
+ARENA_PRESETS.Swamp = {
+	DisplayName = "Улы батпақ",
+	Spawn = Vector3.new(0, 1, 28),
+	PickupPoints = pickupRing(23, 7),
+	Build = function()
+		local platform = newAnchored(
+			"ArenaPlatform",
+			Vector3.new(4, 90, 90),
+			CFrame.new(0, -2, 0) * CFrame.Angles(0, 0, math.rad(90)),
+			Enum.Material.Ground,
+			Color3.fromRGB(55, 62, 45)
+		)
+		platform.Shape = Enum.PartType.Cylinder
+
+		buildRing("EdgeGlow", 45, 52, Vector3.new(3, 0.4, 1), 0.3, POISON_GLOW)
+
+		local poolPositions = {}
+		for index = 1, 5 do
+			local angle = (index / 5) * math.pi * 2
+			table.insert(poolPositions, Vector3.new(math.cos(angle) * 18, 0.3, math.sin(angle) * 18))
+		end
+		for _, position in poolPositions do
+			startPoisonPool(position)
+		end
+
+		for index = 1, 6 do
+			local angle = (index / 6) * math.pi * 2 + math.rad(30)
+			local x, z = math.cos(angle) * 30, math.sin(angle) * 30
+			newAnchored("DeadTree", Vector3.new(1.6, 10, 1.6), CFrame.new(x, 4, z), Enum.Material.Wood, Color3.fromRGB(45, 40, 35))
+		end
+
+		tuneLighting(Color3.fromRGB(45, 55, 40), Color3.fromRGB(70, 85, 60), 21, 45, Color3.fromRGB(120, 160, 110))
+	end,
+}
+
+ARENA_PRESETS.NeonColosseum = {
+	DisplayName = "Неон колизей",
+	Spawn = Vector3.new(0, 1, 24),
+	PickupPoints = pickupRing(22, 6),
+	Build = function()
+		local platform =
+			newAnchored("ArenaPlatform", Vector3.new(4, 100, 100), CFrame.new(0, -2, 0) * CFrame.Angles(0, 0, math.rad(90)), Enum.Material.Metal, Color3.fromRGB(18, 18, 24))
+		platform.Shape = Enum.PartType.Cylinder
+
+		buildRing("EdgeGlowOuter", 50, 60, Vector3.new(3, 0.4, 1), 0.3, NEON_CYAN)
+		buildRing("EdgeGlowInner", 34, 48, Vector3.new(2, 0.2, 0.6), 0.15, NEON_MAGENTA)
+		buildRing("CoreGlow", 8, 20, Vector3.new(1.4, 0.2, 0.5), 0.1, NEON_CYAN)
+
+		for index = 1, 8 do
+			local angle = (index / 8) * math.pi * 2
+			local x, z = math.cos(angle) * 40, math.sin(angle) * 40
+			local color = (index % 2 == 0) and NEON_CYAN or NEON_MAGENTA
+
+			newAnchored("PillarBase", Vector3.new(5, 1, 5), CFrame.new(x, 0.5, z), Enum.Material.Metal, Color3.fromRGB(24, 24, 30))
+			local pillar = newAnchored("NeonPillar", Vector3.new(1.4, 18, 1.4), CFrame.new(x, 10, z), Enum.Material.Neon, color)
+			pillar.CanCollide = false
+
+			local light = Instance.new("PointLight")
+			light.Color = color
+			light.Range = 22
+			light.Brightness = 2
+			light.Parent = pillar
+		end
+
+		tuneLighting(Color3.fromRGB(30, 20, 45), Color3.fromRGB(50, 30, 70), 0, 180, Color3.fromRGB(120, 60, 160))
+	end,
+}
+
+local ARENA_ORDER = { "Classic", "Lava", "SkyIslands", "Frozen", "Desert", "Swamp", "NeonColosseum" }
+
 local function teleportAllPlayers(spawnPosition: Vector3)
 	for _, player in Players:GetPlayers() do
 		local character = player.Character
@@ -346,6 +499,17 @@ local function teleportAllPlayers(spawnPosition: Vector3)
 end
 
 local changeListeners = {}
+
+local ROTATION_INTERVAL_SECONDS = 4 * 24 * 60 * 60 -- 4 күн
+local ROTATION_CHECK_INTERVAL = 30 * 60 -- сервер ұзақ жұмыс істесе, әр 30 минутта тексереді
+
+-- Барлық сервер данасы (жаңа Roblox сервер іске қосылғанда) бірдей нәтиже алуы үшін
+-- нақты уақытқа (os.time) негізделген жаһандық индекс есептейді — сервер өзі 4 күн
+-- бойы тірі қалуын күтпейді, әр жаңа сервер сол сәттегі "кезектегі" аренаны алады.
+local function scheduledArena(): string
+	local index = math.floor(os.time() / ROTATION_INTERVAL_SECONDS) % #ARENA_ORDER
+	return ARENA_ORDER[index + 1]
+end
 
 function ArenaService.GetCurrent(): string
 	return currentArena
@@ -391,7 +555,19 @@ function ArenaService.Init()
 	Players.RespawnTime = 3
 
 	removeTemplateParts()
-	ArenaService.SetArena("Classic")
+	ArenaService.SetArena(scheduledArena())
+
+	task.spawn(function()
+		while true do
+			task.wait(ROTATION_CHECK_INTERVAL)
+
+			local expected = scheduledArena()
+			if expected ~= currentArena then
+				print(string.format("[Arena] 4 күндік автоматты ротация: %s", expected))
+				ArenaService.SetArena(expected)
+			end
+		end
+	end)
 
 	Players.PlayerAdded:Connect(function(player)
 		ArenaChangedEvent:FireClient(player, currentArena)

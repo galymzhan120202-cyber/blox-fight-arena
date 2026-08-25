@@ -5,12 +5,15 @@ local MenuUI = require(script.Parent.MenuUI)
 local SetArenaEvent = ReplicatedStorage.RemoteEvents:WaitForChild("SetArena")
 local ArenaChangedEvent = ReplicatedStorage.RemoteEvents:WaitForChild("ArenaChanged")
 
-local ARENAS = { "Classic", "Lava", "SkyIslands", "Frozen" }
+local ARENAS = { "Classic", "Lava", "SkyIslands", "Frozen", "Desert", "Swamp", "NeonColosseum" }
 local ARENA_LABELS = {
 	Classic = "Классикалық",
 	Lava = "Лава шұңқыры",
 	SkyIslands = "Аспан аралдары",
 	Frozen = "Мұзды құрсау",
+	Desert = "Шөл дала",
+	Swamp = "Улы батпақ",
+	NeonColosseum = "Неон колизей",
 }
 
 local ArenaUI = {}
