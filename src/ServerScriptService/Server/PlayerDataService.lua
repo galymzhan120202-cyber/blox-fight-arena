@@ -81,6 +81,14 @@ function PlayerDataService.Get(player: Player)
 	return sessionData[player]
 end
 
+function PlayerDataService.WaitForData(player: Player, timeoutSeconds: number?)
+	local deadline = os.clock() + (timeoutSeconds or 10)
+	while not sessionData[player] and player.Parent and os.clock() < deadline do
+		task.wait(0.1)
+	end
+	return sessionData[player]
+end
+
 function PlayerDataService.AddXP(player: Player, amount: number)
 	local data = sessionData[player]
 	if not data then

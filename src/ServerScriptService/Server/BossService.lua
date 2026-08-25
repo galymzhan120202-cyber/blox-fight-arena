@@ -29,6 +29,7 @@ local BossService = {}
 
 local activeBoss = nil :: { model: Model, humanoid: Humanoid }?
 local desiredActive = false
+local nextSpawnAllowedAt = 0
 
 local function weldTo(base: BasePart, part: BasePart)
 	local weld = Instance.new("WeldConstraint")
@@ -275,7 +276,7 @@ local function despawnBoss(awardXP: boolean)
 end
 
 local function spawnBoss()
-	if activeBoss then
+	if activeBoss or os.clock() < nextSpawnAllowedAt then
 		return
 	end
 
@@ -315,6 +316,7 @@ local function spawnBoss()
 
 	humanoid.Died:Connect(function()
 		despawnBoss(true)
+		nextSpawnAllowedAt = os.clock() + RESPAWN_DELAY
 
 		task.wait(RESPAWN_DELAY)
 		if desiredActive then

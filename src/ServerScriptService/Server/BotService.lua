@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
 local NameplateService = require(script.Parent.NameplateService)
+local AdminService = require(script.Parent.AdminService)
 
 local DAMAGEABLE_TAG = "Damageable"
 local BOT_TAG = "Bot"
@@ -237,8 +238,8 @@ function BotService.Init()
 		BotCountChangedEvent:FireClient(player, desiredBotCount)
 	end)
 
-	SetBotCountEvent.OnServerEvent:Connect(function(_player, count)
-		if typeof(count) == "number" then
+	SetBotCountEvent.OnServerEvent:Connect(function(player, count)
+		if AdminService.IsAdmin(player) and typeof(count) == "number" then
 			BotService.SetCount(count)
 		end
 	end)

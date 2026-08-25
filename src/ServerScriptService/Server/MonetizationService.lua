@@ -19,8 +19,13 @@ local GAMEPASS_IDS = {
 	AllSkins = 0,
 }
 
+-- ЕСКЕРТУ: барлық үш Developer Product-тың нақты ID-ін Creator Dashboard-тан алып,
+-- осында толтырыңыз. Map етілмеген ProductId келсе, processReceipt енді Coins
+-- бермей, NotProcessedYet қайтарады (Robux алынып, сыйақы жоғалып кетпес үшін).
 local PRODUCT_COINS = {
-	[0] = 500, -- "500 Coins" Developer Product ID осында
+	-- [123456] = 500,  -- "500 Coins"
+	-- [123457] = 1500, -- "1500 Coins"
+	-- [123458] = 5000, -- "5000 Coins"
 }
 
 local VIP_MULTIPLIER = 1.2
@@ -50,7 +55,7 @@ local function applyOwnedGamepasses(player: Player)
 	vipCache[player] = MonetizationService.PlayerOwnsGamepass(player, "VIP")
 
 	if MonetizationService.PlayerOwnsGamepass(player, "AllSkins") then
-		local data = PlayerDataService.Get(player)
+		local data = PlayerDataService.WaitForData(player)
 		if data then
 			for skinId in CosmeticsDatabase do
 				data.OwnedCosmetics[skinId] = true
@@ -73,17 +78,26 @@ local function processReceipt(receiptInfo)
 	end
 
 	local coinAmount = PRODUCT_COINS[receiptInfo.ProductId]
-	if coinAmount then
-		PlayerDataService.AddCoins(player, coinAmount)
-		print(
+	if not coinAmount then
+		warn(
 			string.format(
-				"[Monetization] %s +%d Coins сатып алды (ProductId=%d)",
-				player.Name,
-				coinAmount,
-				receiptInfo.ProductId
+				"[Monetization] Белгісіз ProductId=%d (%s) — PRODUCT_COINS-те жоқ, сыйақы берілмеді",
+				receiptInfo.ProductId,
+				player.Name
 			)
 		)
+		return Enum.ProductPurchaseDecision.NotProcessedYet
 	end
+
+	PlayerDataService.AddCoins(player, coinAmount)
+	print(
+		string.format(
+			"[Monetization] %s +%d Coins сатып алды (ProductId=%d)",
+			player.Name,
+			coinAmount,
+			receiptInfo.ProductId
+		)
+	)
 
 	return Enum.ProductPurchaseDecision.PurchaseGranted
 end

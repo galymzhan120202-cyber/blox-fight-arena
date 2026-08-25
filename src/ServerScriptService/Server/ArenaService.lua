@@ -14,6 +14,7 @@ local LAVA_GLOW = Color3.fromRGB(255, 90, 20)
 local ICE_COLOR = Color3.fromRGB(200, 220, 235)
 
 local BossService = require(script.Parent.BossService)
+local AdminService = require(script.Parent.AdminService)
 
 local SetArenaEvent = ReplicatedStorage.RemoteEvents:WaitForChild("SetArena")
 local ArenaChangedEvent = ReplicatedStorage.RemoteEvents:WaitForChild("ArenaChanged")
@@ -359,8 +360,8 @@ function ArenaService.Init()
 		ArenaChangedEvent:FireClient(player, currentArena)
 	end)
 
-	SetArenaEvent.OnServerEvent:Connect(function(_player, name)
-		if typeof(name) == "string" then
+	SetArenaEvent.OnServerEvent:Connect(function(player, name)
+		if AdminService.IsAdmin(player) and typeof(name) == "string" then
 			ArenaService.SetArena(name)
 		end
 	end)

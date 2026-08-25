@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local WeaponDatabase = require(ReplicatedStorage.Modules.Data.WeaponDatabase)
 local WeaponModelService = require(script.Parent.WeaponModelService)
+local AdminService = require(script.Parent.AdminService)
 
 local RANDOMIZER_INTERVAL = 40
 
@@ -124,8 +125,8 @@ function WeaponService.Init()
 		setWeapon(player, CLASS_DEFAULT_WEAPON[className])
 	end)
 
-	SetGameModeEvent.OnServerEvent:Connect(function(_player, mode)
-		if typeof(mode) ~= "string" then
+	SetGameModeEvent.OnServerEvent:Connect(function(player, mode)
+		if not AdminService.IsAdmin(player) or typeof(mode) ~= "string" then
 			return
 		end
 		WeaponService.SetMode(mode)

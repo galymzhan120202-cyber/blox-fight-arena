@@ -189,6 +189,12 @@ function CombatService.Init()
 		lastAbilityUse[player] = nil
 		killStreaks[player] = nil
 		lastKilledBy[player] = nil
+
+		for victim, killer in lastKilledBy do
+			if killer == player then
+				lastKilledBy[victim] = nil
+			end
+		end
 	end)
 end
 

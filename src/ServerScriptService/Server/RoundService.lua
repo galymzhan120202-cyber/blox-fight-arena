@@ -5,6 +5,7 @@ local ClassService = require(script.Parent.ClassService)
 local WeaponService = require(script.Parent.WeaponService)
 local PlayerDataService = require(script.Parent.PlayerDataService)
 local NotificationService = require(script.Parent.NotificationService)
+local AdminService = require(script.Parent.AdminService)
 
 local SetRoundActiveEvent = ReplicatedStorage.RemoteEvents:WaitForChild("SetRoundActive")
 local RoundChangedEvent = ReplicatedStorage.RemoteEvents:WaitForChild("RoundChanged")
@@ -66,8 +67,8 @@ function RoundService.SetActive(active: boolean)
 end
 
 function RoundService.Init()
-	SetRoundActiveEvent.OnServerEvent:Connect(function(_player, active)
-		if typeof(active) == "boolean" then
+	SetRoundActiveEvent.OnServerEvent:Connect(function(player, active)
+		if AdminService.IsAdmin(player) and typeof(active) == "boolean" then
 			RoundService.SetActive(active)
 		end
 	end)

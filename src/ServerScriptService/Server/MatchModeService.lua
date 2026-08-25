@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local BossService = require(script.Parent.BossService)
 local DummyService = require(script.Parent.DummyService)
+local AdminService = require(script.Parent.AdminService)
 
 local SetMatchModeEvent = ReplicatedStorage.RemoteEvents:WaitForChild("SetMatchMode")
 local MatchModeChangedEvent = ReplicatedStorage.RemoteEvents:WaitForChild("MatchModeChanged")
@@ -62,6 +63,10 @@ function MatchModeService.SetMode(mode: string): boolean
 		return false
 	end
 
+	if mode == currentMode then
+		return true
+	end
+
 	currentMode = mode
 	MatchModeChangedEvent:FireAllClients(currentMode)
 	print("[MatchMode] Режим ауыстырылды: " .. mode)
@@ -92,8 +97,8 @@ function MatchModeService.Init()
 		end
 	end)
 
-	SetMatchModeEvent.OnServerEvent:Connect(function(_player, mode)
-		if typeof(mode) ~= "string" then
+	SetMatchModeEvent.OnServerEvent:Connect(function(player, mode)
+		if not AdminService.IsAdmin(player) or typeof(mode) ~= "string" then
 			return
 		end
 		MatchModeService.SetMode(mode)
