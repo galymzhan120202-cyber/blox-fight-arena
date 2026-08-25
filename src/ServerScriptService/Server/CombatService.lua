@@ -85,7 +85,7 @@ local function onUseAbility(player: Player)
 	end
 
 	lastAbilityUse[player] = os.clock()
-	WeaponModelService.PlaySwing(player.Character)
+	WeaponModelService.PlaySwing(player.Character, weapon.Name)
 
 	local eligible = {}
 	for _, targetModel in CollectionService:GetTagged(DAMAGEABLE_TAG) do

@@ -107,7 +107,10 @@ end
 function CosmeticsService.Init()
 	Players.PlayerAdded:Connect(function(player)
 		player.CharacterAdded:Connect(function(character)
-			local data = PlayerDataService.Get(player)
+			-- PlayerDataService.PlayerAdded DataStore-ды жүктеп жатқанда бірінші
+			-- Character дереу пайда болуы мүмкін (auto-spawn) — сол сәтте деректер
+			-- әлі дайын болмай, скин ешқашан тағылмай қалатын жарыс жағдайы болатын.
+			local data = PlayerDataService.WaitForData(player)
 			if data then
 				applyVisual(character, data.EquippedSkin)
 			end

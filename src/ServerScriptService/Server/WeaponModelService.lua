@@ -1,8 +1,14 @@
 local TweenService = game:GetService("TweenService")
+local Workspace = game:GetService("Workspace")
 
 local VISUAL_MODEL_NAME = "WeaponVisual"
+local ARROW_VISUAL_NAME = "ArrowVisual"
 local SWING_OUT_TIME = 0.1
 local SWING_BACK_TIME = 0.15
+local DRAW_TIME = 0.12
+local RELEASE_TIME = 0.08
+local ARROW_TRAVEL_DISTANCE = 26
+local ARROW_TRAVEL_TIME = 0.18
 
 local WeaponModelService = {}
 
@@ -225,12 +231,53 @@ function WeaponModelService.Equip(player: Player, character: Model, weaponName: 
 	end
 end
 
-function WeaponModelService.PlaySwing(character: Model)
-	local tool = character:FindFirstChild(VISUAL_MODEL_NAME) :: Tool?
-	if not tool then
+local function spawnArrow(character: Model)
+	local rootPart = character:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if not rootPart then
 		return
 	end
 
+	local arrow = Instance.new("Part")
+	arrow.Name = ARROW_VISUAL_NAME
+	arrow.Size = Vector3.new(0.12, 0.12, 2)
+	arrow.Material = Enum.Material.Metal
+	arrow.BrickColor = BrickColor.new("Reddish brown")
+	arrow.CanCollide = false
+	arrow.Anchored = true
+	arrow.CFrame = rootPart.CFrame * CFrame.new(0, 0.5, -2)
+	arrow.Parent = Workspace
+
+	local targetCFrame = arrow.CFrame * CFrame.new(0, 0, -ARROW_TRAVEL_DISTANCE)
+	local tween = TweenService:Create(arrow, TweenInfo.new(ARROW_TRAVEL_TIME, Enum.EasingStyle.Linear), {
+		CFrame = targetCFrame,
+	})
+
+	tween.Completed:Connect(function()
+		arrow:Destroy()
+	end)
+
+	tween:Play()
+end
+
+local function playShoot(tool: Tool, character: Model)
+	local restGrip = tool.Grip
+	local drawnGrip = restGrip * CFrame.new(0, 0, 0.35)
+
+	local drawBack = TweenService:Create(tool, TweenInfo.new(DRAW_TIME, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+		Grip = drawnGrip,
+	})
+
+	drawBack.Completed:Connect(function()
+		TweenService:Create(tool, TweenInfo.new(RELEASE_TIME, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+			Grip = restGrip,
+		}):Play()
+		spawnArrow(character)
+	end)
+
+	drawBack:Play()
+end
+
+local function playSwing(tool: Tool)
 	local restGrip = tool.Grip
 	local swungGrip = restGrip * CFrame.Angles(math.rad(-80), 0, 0)
 
@@ -246,6 +293,21 @@ function WeaponModelService.PlaySwing(character: Model)
 	end)
 
 	swingOut:Play()
+end
+
+-- weaponName беруге болады (мыс. "Bow") — сол кезде жалпы "соғу" емес, садақ тарту +
+-- көрінетін жебе ұшу анимациясы ойналады. Берілмесе, әдепкі жақынтабан "swing" қолданылады.
+function WeaponModelService.PlaySwing(character: Model, weaponName: string?)
+	local tool = character:FindFirstChild(VISUAL_MODEL_NAME) :: Tool?
+	if not tool then
+		return
+	end
+
+	if weaponName == "Bow" then
+		playShoot(tool, character)
+	else
+		playSwing(tool)
+	end
 end
 
 return WeaponModelService
