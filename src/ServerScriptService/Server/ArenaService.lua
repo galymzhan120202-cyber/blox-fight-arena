@@ -14,8 +14,8 @@ local LAVA_GLOW = Color3.fromRGB(255, 90, 20)
 local ICE_COLOR = Color3.fromRGB(200, 220, 235)
 local SAND_COLOR = Color3.fromRGB(196, 164, 108)
 local POISON_GLOW = Color3.fromRGB(120, 255, 90)
-local NEON_MAGENTA = Color3.fromRGB(210, 70, 185)
-local NEON_CYAN = Color3.fromRGB(70, 185, 205)
+local NEON_MAGENTA = Color3.fromRGB(230, 80, 200)
+local NEON_CYAN = Color3.fromRGB(85, 205, 225)
 
 local BossService = require(script.Parent.BossService)
 local AdminService = require(script.Parent.AdminService)
@@ -458,30 +458,30 @@ ARENA_PRESETS.NeonColosseum = {
 	PickupPoints = pickupRing(22, 6),
 	Build = function()
 		local platform =
-			newAnchored("ArenaPlatform", Vector3.new(4, 100, 100), CFrame.new(0, -2, 0) * CFrame.Angles(0, 0, math.rad(90)), Enum.Material.Metal, Color3.fromRGB(18, 18, 24))
+			newAnchored("ArenaPlatform", Vector3.new(4, 100, 100), CFrame.new(0, -2, 0) * CFrame.Angles(0, 0, math.rad(90)), Enum.Material.Metal, Color3.fromRGB(32, 32, 40))
 		platform.Shape = Enum.PartType.Cylinder
 
-		buildRing("EdgeGlowOuter", 50, 24, Vector3.new(2.6, 0.4, 1), 0.3, NEON_CYAN)
-		buildRing("EdgeGlowInner", 34, 18, Vector3.new(1.8, 0.2, 0.6), 0.15, NEON_MAGENTA)
-		buildRing("CoreGlow", 8, 10, Vector3.new(1.2, 0.2, 0.5), 0.1, NEON_CYAN)
+		buildRing("EdgeGlowOuter", 50, 36, Vector3.new(2.8, 0.4, 1), 0.3, NEON_CYAN)
+		buildRing("EdgeGlowInner", 34, 28, Vector3.new(2, 0.2, 0.6), 0.15, NEON_MAGENTA)
+		buildRing("CoreGlow", 8, 14, Vector3.new(1.3, 0.2, 0.5), 0.1, NEON_CYAN)
 
 		for index = 1, 8 do
 			local angle = (index / 8) * math.pi * 2
 			local x, z = math.cos(angle) * 40, math.sin(angle) * 40
 			local color = (index % 2 == 0) and NEON_CYAN or NEON_MAGENTA
 
-			newAnchored("PillarBase", Vector3.new(5, 1, 5), CFrame.new(x, 0.5, z), Enum.Material.Metal, Color3.fromRGB(24, 24, 30))
+			newAnchored("PillarBase", Vector3.new(5, 1, 5), CFrame.new(x, 0.5, z), Enum.Material.Metal, Color3.fromRGB(30, 30, 38))
 			local pillar = newAnchored("NeonPillar", Vector3.new(1.4, 18, 1.4), CFrame.new(x, 10, z), Enum.Material.Neon, color)
 			pillar.CanCollide = false
 
 			local light = Instance.new("PointLight")
 			light.Color = color
-			light.Range = 14
-			light.Brightness = 1
+			light.Range = 20
+			light.Brightness = 1.6
 			light.Parent = pillar
 		end
 
-		tuneLighting(Color3.fromRGB(38, 32, 50), Color3.fromRGB(55, 45, 70), 2, 220, Color3.fromRGB(110, 80, 130))
+		tuneLighting(Color3.fromRGB(65, 60, 80), Color3.fromRGB(90, 82, 105), 5, 300, Color3.fromRGB(130, 100, 155))
 	end,
 }
 
