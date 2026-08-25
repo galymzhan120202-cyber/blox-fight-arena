@@ -79,6 +79,7 @@ local function onUseAbility(player: Player)
 
 	local mode = MatchModeService.GetMode()
 
+	local eligible = {}
 	for _, targetModel in CollectionService:GetTagged(DAMAGEABLE_TAG) do
 		if targetModel == player.Character then
 			continue
@@ -111,6 +112,27 @@ local function onUseAbility(player: Player)
 		if toTarget:Dot(facing) < 0.3 then
 			continue
 		end
+
+		table.insert(eligible, {
+			model = targetModel,
+			player = targetPlayer,
+			root = otherRoot,
+			humanoid = humanoid,
+			distance = distance,
+		})
+	end
+
+	-- Ұзын қашықтықты қарулар (Range-і ұзын, SingleTarget=true) тек ең жақын нысанаға тиеді;
+	-- жақынтабан қарулар (Sword/Daggers/т.б.) бұрынғыдай доғадағы барлығына тиеді (cleave).
+	if weapon.SingleTarget and #eligible > 1 then
+		table.sort(eligible, function(a, b)
+			return a.distance < b.distance
+		end)
+		eligible = { eligible[1] }
+	end
+
+	for _, target in eligible do
+		local targetModel, targetPlayer, otherRoot, humanoid = target.model, target.player, target.root, target.humanoid
 
 		humanoid:TakeDamage(weapon.Damage)
 		AttackHitEvent:FireAllClients(targetModel, weapon.Damage)
