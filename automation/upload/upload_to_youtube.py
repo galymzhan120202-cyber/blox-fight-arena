@@ -5,8 +5,10 @@
 `youtube_token.json` жасаңыз (нұсқаулық сол файлдың ішінде).
 
 Қажет орта айнымалылары (GitHub Secrets/Variables):
-  YOUTUBE_TOKEN_JSON  (get_youtube_token.py шығарған youtube_token.json мазмұны)
-  GAME_LINK           (Roblox ойын сілтемесі, сипаттамаға қосылады)
+  YOUTUBE_TOKEN_JSON   (get_youtube_token.py шығарған youtube_token.json мазмұны)
+  GAME_LINK            (Roblox ойын сілтемесі, сипаттамаға қосылады)
+  TELEGRAM_BOT_TOKEN   (Telegram бот токені — жүктеу нәтижесі туралы хабарлау үшін, міндетті емес)
+  TELEGRAM_CHAT_ID     (хабарлама жіберілетін chat/user ID, міндетті емес)
 
 Клиптер:            automation/upload/clips/*.mp4  (OBS/ffmpeg-пен сырттан дайындалады)
 Жүктелгендер тізімі: automation/upload/uploaded.json (қайта жүктемеу үшін)
@@ -14,6 +16,8 @@
 
 import json
 import os
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 import google.auth.transport.requests
@@ -25,6 +29,23 @@ CLIPS_DIR = Path(__file__).parent / "clips"
 UPLOADED_LOG = Path(__file__).parent / "uploaded.json"
 TOKEN_FILE = Path(__file__).parent / "youtube_token.json"
 GAME_LINK = os.environ.get("GAME_LINK", "")
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
+
+
+def notify_telegram(text: str) -> None:
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        return
+
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    payload = json.dumps({"chat_id": TELEGRAM_CHAT_ID, "text": text}).encode("utf-8")
+    request = urllib.request.Request(
+        url, data=payload, headers={"Content-Type": "application/json"}
+    )
+    try:
+        urllib.request.urlopen(request, timeout=10)
+    except urllib.error.URLError as error:
+        print(f"[Telegram] Хабарлама жіберілмеді: {error}")
 
 
 def load_uploaded() -> set:
@@ -79,7 +100,9 @@ def upload_clip(youtube, clip_path: Path) -> None:
     while response is None:
         _, response = request.next_chunk()
 
-    print(f"[Upload] {clip_path.name} -> https://youtu.be/{response['id']}")
+    video_url = f"https://youtu.be/{response['id']}"
+    print(f"[Upload] {clip_path.name} -> {video_url}")
+    notify_telegram(f"✅ Жаңа Shorts жүктелді!\n{title}\n{video_url}")
 
 
 def main() -> None:
@@ -100,6 +123,7 @@ def main() -> None:
             save_uploaded(uploaded)
         except Exception as error:  # noqa: BLE001 - CI логында толық қате көрінуі керек
             print(f"[Upload] Қате ({clip_path.name}): {error}")
+            notify_telegram(f"❌ Жүктеу қатесі: {clip_path.name}\n{error}")
 
 
 if __name__ == "__main__":

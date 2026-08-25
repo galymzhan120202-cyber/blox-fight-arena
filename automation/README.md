@@ -35,8 +35,21 @@ GitHub Actions Roblox клиентін іске қосып, экранды жа�
 |---|---|---|
 | `YOUTUBE_TOKEN_JSON` | Secret | `youtube_token.json` файлының толық мазмұны |
 | `GAME_LINK` | Variable | Roblox ойынының сілтемесі |
+| `TELEGRAM_BOT_TOKEN` | Secret | Telegram бот токені (міндетті емес — хабарландыру үшін) |
+| `TELEGRAM_CHAT_ID` | Secret | Хабарлама жіберілетін chat/user ID (міндетті емес) |
 
 Клиптерді `automation/upload/clips/` папкасына қойып, commit/push жасасаңыз (немесе workflow-ды қолмен іске қоссаңыз), келесі cron циклінде автоматты жүктеледі.
+
+### Telegram хабарландыру (міндетті емес)
+
+Әр сәтті/сәтсіз жүктеу туралы Telegram-ға хабар келеді (`upload/upload_to_youtube.py` ішіндегі `notify_telegram`). Баптау:
+
+1. [@BotFather](https://t.me/BotFather)-дан бот жасап, токен алыңыз.
+2. Жаңа ботпен жеке чат ашып, кез келген хабарлама жіберіңіз (bot сізге бірінші жаза алмайды — сіз бастауыңыз керек).
+3. `https://api.telegram.org/bot<TOKEN>/getUpdates` арқылы `chat.id` мәнін табыңыз.
+4. `TELEGRAM_BOT_TOKEN` мен `TELEGRAM_CHAT_ID`-ды GitHub Secrets-ке қосыңыз (жоғарыдағы кестені қараңыз).
+
+Екеуі де бос болса, хабарландыру жай өткізіп жіберіледі (жүктеу процесіне әсер етпейді).
 
 ## Монетизация жоспары
 
