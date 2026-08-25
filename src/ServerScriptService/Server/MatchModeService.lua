@@ -5,6 +5,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local BossService = require(script.Parent.BossService)
 local DummyService = require(script.Parent.DummyService)
 local AdminService = require(script.Parent.AdminService)
+local SquadService = require(script.Parent.SquadService)
 
 local SetMatchModeEvent = ReplicatedStorage.RemoteEvents:WaitForChild("SetMatchMode")
 local MatchModeChangedEvent = ReplicatedStorage.RemoteEvents:WaitForChild("MatchModeChanged")
@@ -37,6 +38,15 @@ end
 
 local function assignToSmallerTeam(player: Player)
 	ensureTeams()
+
+	-- Отрядтастары бар болса, олардың біреуі қазірдің өзінде тобы бар ма, соны
+	-- тексереді — бар болса, сол топқа қосылады (баланс есебінен маңыздырақ).
+	for _, mate in SquadService.GetSquadmates(player) do
+		if mate.Team == teamA or mate.Team == teamB then
+			player.Team = mate.Team
+			return
+		end
+	end
 
 	local countA, countB = 0, 0
 	for _, otherPlayer in Players:GetPlayers() do

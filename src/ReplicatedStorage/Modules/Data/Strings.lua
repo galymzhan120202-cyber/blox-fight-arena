@@ -52,6 +52,16 @@ return {
 		ClanLeave = "Кланнан шығу",
 		ClanStatus = "Клан: %s (%d мүше)",
 
+		SquadSectionTitle = "Отряд",
+		SquadSolo = "Сіз жалғызсыз",
+		SquadMembers = "Отряд: %s",
+		SquadNamePlaceholder = "Ойыншы аты...",
+		SquadInviteButton = "Шақыру",
+		SquadLeaveButton = "Отрядтан шығу",
+		SquadAccept = "Қабылдау",
+		SquadDecline = "Бас тарту",
+		SquadInvitePrompt = "%s сізді отрядқа шақырды",
+
 		LeaderboardTitle = "Рейтинг",
 		LeaderboardRefresh = "Жаңарту",
 		LeaderboardYou = "Сіздің дәрежеңіз: %s (%d RP)",
@@ -118,6 +128,16 @@ return {
 		ClanJoin = "Вступить в клан",
 		ClanLeave = "Покинуть клан",
 		ClanStatus = "Клан: %s (%d участников)",
+
+		SquadSectionTitle = "Отряд",
+		SquadSolo = "Вы одни",
+		SquadMembers = "Отряд: %s",
+		SquadNamePlaceholder = "Имя игрока...",
+		SquadInviteButton = "Пригласить",
+		SquadLeaveButton = "Покинуть отряд",
+		SquadAccept = "Принять",
+		SquadDecline = "Отклонить",
+		SquadInvitePrompt = "%s пригласил(а) вас в отряд",
 
 		LeaderboardTitle = "Рейтинг",
 		LeaderboardRefresh = "Обновить",
