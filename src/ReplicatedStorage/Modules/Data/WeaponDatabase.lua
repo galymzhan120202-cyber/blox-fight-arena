@@ -3,10 +3,10 @@
 -- қарулар (снаряд/сиқыр) бір соққыда тек ЕҢ ЖАҚЫН нысанаға тиеді (CombatService.lua);
 -- SingleTarget жоқ қарулар (жақынтабан) доғадағы барлық нысанаға тиеді (cleave).
 return {
-	Sword = { Name = "Sword", Damage = 20, Cooldown = 1.5, Range = 8 }, -- 13.3 DPS, tank/bruiser (cleave)
-	Bow = { Name = "Bow", Damage = 9, Cooldown = 0.8, Range = 14, SingleTarget = true }, -- 11.3 DPS, poke/kite
-	Staff = { Name = "Staff", Damage = 26, Cooldown = 2.2, Range = 16, SingleTarget = true }, -- 11.8 DPS, big single burst
-	Daggers = { Name = "Daggers", Damage = 35, Cooldown = 1.8, Range = 5 }, -- 19.4 DPS, glass-cannon melee
-	Hammer = { Name = "Hammer", Damage = 42, Cooldown = 3.0, Range = 7 }, -- 14.0 DPS, slow bruiser (cleave)
-	Spear = { Name = "Spear", Damage = 18, Cooldown = 1.2, Range = 12 }, -- 15.0 DPS, all-rounder poke (cleave)
+	Sword = { Name = "Sword", Damage = 14, Cooldown = 1.05, Range = 8 }, -- 13.3 DPS, tank/bruiser (cleave)
+	Bow = { Name = "Bow", Damage = 6, Cooldown = 0.55, Range = 14, SingleTarget = true }, -- 10.9 DPS, poke/kite
+	Staff = { Name = "Staff", Damage = 19, Cooldown = 1.6, Range = 16, SingleTarget = true }, -- 11.9 DPS, big single burst
+	Daggers = { Name = "Daggers", Damage = 25, Cooldown = 1.3, Range = 5 }, -- 19.2 DPS, glass-cannon melee
+	Hammer = { Name = "Hammer", Damage = 30, Cooldown = 2.15, Range = 7 }, -- 14.0 DPS, slow bruiser (cleave)
+	Spear = { Name = "Spear", Damage = 13, Cooldown = 0.85, Range = 12 }, -- 15.3 DPS, all-rounder poke (cleave)
 }

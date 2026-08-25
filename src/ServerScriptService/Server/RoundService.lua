@@ -14,6 +14,11 @@ local RoundService = {}
 
 local roundActive = false
 local roundStartKills = {}
+local getBotCount: (() -> number)?
+
+function RoundService.SetBotCountProvider(fn: () -> number)
+	getBotCount = fn
+end
 
 local function announceMvp()
 	local mvpPlayer, mvpKills = nil, 0
@@ -68,9 +73,23 @@ end
 
 function RoundService.Init()
 	SetRoundActiveEvent.OnServerEvent:Connect(function(player, active)
-		if AdminService.IsAdmin(player) and typeof(active) == "boolean" then
-			RoundService.SetActive(active)
+		if not (AdminService.IsAdmin(player) and typeof(active) == "boolean") then
+			return
 		end
+
+		if active then
+			local botCount = getBotCount and getBotCount() or 0
+			if botCount <= 0 and #Players:GetPlayers() < 2 then
+				NotificationService.Toast(
+					player,
+					"Алдымен боттар қосыңыз немесе басқа ойыншы кірсін!",
+					Color3.fromRGB(220, 80, 80)
+				)
+				return
+			end
+		end
+
+		RoundService.SetActive(active)
 	end)
 
 	Players.PlayerAdded:Connect(function(player)

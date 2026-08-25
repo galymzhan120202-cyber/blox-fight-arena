@@ -227,6 +227,10 @@ spawnBot = function(id: number)
 	end)
 end
 
+function BotService.GetCount(): number
+	return desiredBotCount
+end
+
 function BotService.SetCount(count: number)
 	count = math.clamp(count, 0, MAX_BOTS)
 	desiredBotCount = count
@@ -244,6 +248,8 @@ function BotService.SetCount(count: number)
 end
 
 function BotService.Init()
+	RoundService.SetBotCountProvider(BotService.GetCount)
+
 	Players.PlayerAdded:Connect(function(player)
 		BotCountChangedEvent:FireClient(player, desiredBotCount)
 	end)
