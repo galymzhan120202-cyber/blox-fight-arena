@@ -78,9 +78,9 @@ local function onUseAbility(player: Player)
 
 	local mode = MatchModeService.GetMode()
 
-	-- FFA/Team режимінде раунд басталмағанша шабуыл өтпейді (дайындық фазасы қауіпсіз).
-	-- Boss/Training режимдері раунд тұжырымдамасына тәуелсіз — олар өз бетінше қосылады.
-	if (mode == "FFA" or mode == "Team") and not RoundService.IsActive() then
+	-- Solo/Duo/Squad/Auto режимдерінде раунд басталмағанша шабуыл өтпейді (дайындық
+	-- фазасы қауіпсіз). Boss/Training режимдері раунд тұжырымдамасына тәуелсіз.
+	if mode ~= "Boss" and mode ~= "Training" and not RoundService.IsActive() then
 		return
 	end
 
@@ -98,7 +98,7 @@ local function onUseAbility(player: Player)
 			if mode == "Boss" or mode == "Training" then
 				continue
 			end
-			if mode == "Team" and MatchModeService.IsSameTeam(player, targetPlayer) then
+			if MatchModeService.IsSameTeam(player, targetPlayer) then
 				continue
 			end
 		end

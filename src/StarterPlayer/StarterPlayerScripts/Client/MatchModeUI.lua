@@ -6,10 +6,12 @@ local Localization = require(script.Parent.Localization)
 local SetMatchModeEvent = ReplicatedStorage.RemoteEvents:WaitForChild("SetMatchMode")
 local MatchModeChangedEvent = ReplicatedStorage.RemoteEvents:WaitForChild("MatchModeChanged")
 
-local MODES = { "FFA", "Team", "Boss", "Training" }
+local MODES = { "Solo", "Duo", "Squad", "Auto", "Boss", "Training" }
 local MODE_LABEL_KEYS = {
-	FFA = "MatchModeFFA",
-	Team = "MatchModeTeam",
+	Solo = "MatchModeSolo",
+	Duo = "MatchModeDuo",
+	Squad = "MatchModeSquad",
+	Auto = "MatchModeAuto",
 	Boss = "MatchModeBoss",
 	Training = "MatchModeTraining",
 }
@@ -36,7 +38,7 @@ function MatchModeUI.Init()
 	end
 
 	MatchModeChangedEvent.OnClientEvent:Connect(refreshHighlight)
-	refreshHighlight("FFA")
+	refreshHighlight("Solo")
 
 	Localization.OnChanged(function()
 		titleLabel.Text = string.upper(Localization.Get("MatchModeTitle"))

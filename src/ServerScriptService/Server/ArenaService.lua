@@ -14,8 +14,8 @@ local LAVA_GLOW = Color3.fromRGB(255, 90, 20)
 local ICE_COLOR = Color3.fromRGB(200, 220, 235)
 local SAND_COLOR = Color3.fromRGB(196, 164, 108)
 local POISON_GLOW = Color3.fromRGB(120, 255, 90)
-local NEON_MAGENTA = Color3.fromRGB(255, 60, 220)
-local NEON_CYAN = Color3.fromRGB(60, 230, 255)
+local NEON_MAGENTA = Color3.fromRGB(210, 70, 185)
+local NEON_CYAN = Color3.fromRGB(70, 185, 205)
 
 local BossService = require(script.Parent.BossService)
 local AdminService = require(script.Parent.AdminService)
@@ -461,9 +461,9 @@ ARENA_PRESETS.NeonColosseum = {
 			newAnchored("ArenaPlatform", Vector3.new(4, 100, 100), CFrame.new(0, -2, 0) * CFrame.Angles(0, 0, math.rad(90)), Enum.Material.Metal, Color3.fromRGB(18, 18, 24))
 		platform.Shape = Enum.PartType.Cylinder
 
-		buildRing("EdgeGlowOuter", 50, 60, Vector3.new(3, 0.4, 1), 0.3, NEON_CYAN)
-		buildRing("EdgeGlowInner", 34, 48, Vector3.new(2, 0.2, 0.6), 0.15, NEON_MAGENTA)
-		buildRing("CoreGlow", 8, 20, Vector3.new(1.4, 0.2, 0.5), 0.1, NEON_CYAN)
+		buildRing("EdgeGlowOuter", 50, 24, Vector3.new(2.6, 0.4, 1), 0.3, NEON_CYAN)
+		buildRing("EdgeGlowInner", 34, 18, Vector3.new(1.8, 0.2, 0.6), 0.15, NEON_MAGENTA)
+		buildRing("CoreGlow", 8, 10, Vector3.new(1.2, 0.2, 0.5), 0.1, NEON_CYAN)
 
 		for index = 1, 8 do
 			local angle = (index / 8) * math.pi * 2
@@ -476,12 +476,12 @@ ARENA_PRESETS.NeonColosseum = {
 
 			local light = Instance.new("PointLight")
 			light.Color = color
-			light.Range = 22
-			light.Brightness = 2
+			light.Range = 14
+			light.Brightness = 1
 			light.Parent = pillar
 		end
 
-		tuneLighting(Color3.fromRGB(30, 20, 45), Color3.fromRGB(50, 30, 70), 0, 180, Color3.fromRGB(120, 60, 160))
+		tuneLighting(Color3.fromRGB(38, 32, 50), Color3.fromRGB(55, 45, 70), 2, 220, Color3.fromRGB(110, 80, 130))
 	end,
 }
 

@@ -18,8 +18,10 @@ return {
 		WeaponModeClassic = "Classic (тұрақты)",
 
 		MatchModeTitle = "Ойын режимі",
-		MatchModeFFA = "FFA (еркін ұрыс)",
-		MatchModeTeam = "Team (2ге2 / 2ге1)",
+		MatchModeSolo = "Solo (еркін ұрыс)",
+		MatchModeDuo = "Duo (2-2 отряд)",
+		MatchModeSquad = "Squad (4-4 отряд)",
+		MatchModeAuto = "Auto (отрядтар өз бетінше)",
 		MatchModeBoss = "Boss (тек боссқа қарсы)",
 		MatchModeTraining = "Жаттығу (Dummy, PvP жоқ)",
 
@@ -95,8 +97,10 @@ return {
 		WeaponModeClassic = "Classic (постоянно)",
 
 		MatchModeTitle = "Режим игры",
-		MatchModeFFA = "FFA (свободный бой)",
-		MatchModeTeam = "Team (2 на 2 / 2 на 1)",
+		MatchModeSolo = "Solo (свободный бой)",
+		MatchModeDuo = "Duo (2-2 отряда)",
+		MatchModeSquad = "Squad (4-4 отряда)",
+		MatchModeAuto = "Auto (отряды сами по себе)",
 		MatchModeBoss = "Boss (только против босса)",
 		MatchModeTraining = "Тренировка (манекен, без PvP)",
 
