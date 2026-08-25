@@ -4,6 +4,7 @@ local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
 local NotificationService = require(script.Parent.NotificationService)
+local RoundService = require(script.Parent.RoundService)
 
 local EVENT_INTERVAL = 90
 local EVENT_DURATION = 20
@@ -14,6 +15,10 @@ local METEOR_FALL_TIME = 1
 local meteorLoopActive = false
 
 local function strikeMeteor()
+	if not RoundService.IsActive() then
+		return
+	end
+
 	local players = Players:GetPlayers()
 	if #players == 0 then
 		return

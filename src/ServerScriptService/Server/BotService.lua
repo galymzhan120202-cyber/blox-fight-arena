@@ -5,6 +5,7 @@ local Workspace = game:GetService("Workspace")
 
 local NameplateService = require(script.Parent.NameplateService)
 local AdminService = require(script.Parent.AdminService)
+local RoundService = require(script.Parent.RoundService)
 
 local DAMAGEABLE_TAG = "Damageable"
 local BOT_TAG = "Bot"
@@ -176,6 +177,11 @@ spawnBot = function(id: number)
 				break
 			end
 
+			if not RoundService.IsActive() then
+				humanoid:MoveTo(rootPart.Position)
+				continue
+			end
+
 			local _, nearestRoot, _, nearestDistance = findNearestPlayer(rootPart.Position, AGGRO_RANGE)
 
 			if nearestRoot and nearestDistance > ATTACK_RANGE then
@@ -197,6 +203,10 @@ spawnBot = function(id: number)
 			task.wait(ATTACK_COOLDOWN)
 			if activeBots[id] ~= bot or humanoid.Health <= 0 then
 				break
+			end
+
+			if not RoundService.IsActive() then
+				continue
 			end
 
 			local _, targetRoot, targetHumanoid, distance = findNearestPlayer(rootPart.Position, ATTACK_RANGE)

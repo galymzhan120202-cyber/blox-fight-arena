@@ -10,6 +10,7 @@ local MatchModeService = require(script.Parent.MatchModeService)
 local NotificationService = require(script.Parent.NotificationService)
 local HighlightService = require(script.Parent.HighlightService)
 local MonetizationService = require(script.Parent.MonetizationService)
+local RoundService = require(script.Parent.RoundService)
 
 local DAMAGEABLE_TAG = "Damageable"
 local HIT_XP = 10
@@ -74,10 +75,16 @@ local function onUseAbility(player: Player)
 		return
 	end
 
+	local mode = MatchModeService.GetMode()
+
+	-- FFA/Team режимінде раунд басталмағанша шабуыл өтпейді (дайындық фазасы қауіпсіз).
+	-- Boss/Training режимдері раунд тұжырымдамасына тәуелсіз — олар өз бетінше қосылады.
+	if (mode == "FFA" or mode == "Team") and not RoundService.IsActive() then
+		return
+	end
+
 	lastAbilityUse[player] = os.clock()
 	WeaponModelService.PlaySwing(player.Character)
-
-	local mode = MatchModeService.GetMode()
 
 	local eligible = {}
 	for _, targetModel in CollectionService:GetTagged(DAMAGEABLE_TAG) do
