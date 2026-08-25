@@ -2,18 +2,21 @@ local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 
 local NotificationService = require(script.Parent.NotificationService)
+local ArenaService = require(script.Parent.ArenaService)
 
 local PICKUP_COUNT = 3
-local SPAWN_RADIUS = 45
 local HEAL_AMOUNT = 35
 local RESPAWN_DELAY = 20
 
 local HealthPickupService = {}
 
+local activeParts = {}
+
 local function randomPosition(): Vector3
-	local angle = math.random() * math.pi * 2
-	local radius = math.random() * SPAWN_RADIUS
-	return Vector3.new(math.cos(angle) * radius, 3, math.sin(angle) * radius)
+	local points = ArenaService.GetPickupPoints()
+	local base = points[math.random(1, #points)]
+	local jitter = Vector3.new(math.random(-3, 3), 0, math.random(-3, 3))
+	return base + jitter
 end
 
 local spawnPickup
@@ -24,6 +27,7 @@ spawnPickup = function()
 	part.Shape = Enum.PartType.Ball
 	part.Size = Vector3.new(1.6, 1.6, 1.6)
 	part.Position = randomPosition()
+	activeParts[part] = true
 	part.Anchored = true
 	part.CanCollide = false
 	part.Material = Enum.Material.Neon
@@ -70,6 +74,7 @@ spawnPickup = function()
 		end
 
 		claimed = true
+		activeParts[part] = nil
 		humanoid.Health = math.min(humanoid.MaxHealth, humanoid.Health + HEAL_AMOUNT)
 		NotificationService.Toast(player, string.format("+%d HP!", HEAL_AMOUNT), Color3.fromRGB(90, 255, 120))
 		part:Destroy()
@@ -79,10 +84,23 @@ spawnPickup = function()
 	end)
 end
 
+local function relocateAll()
+	for part in activeParts do
+		part:Destroy()
+	end
+	table.clear(activeParts)
+
+	for _ = 1, PICKUP_COUNT do
+		spawnPickup()
+	end
+end
+
 function HealthPickupService.Init()
 	for _ = 1, PICKUP_COUNT do
 		spawnPickup()
 	end
+
+	ArenaService.OnChanged(relocateAll)
 end
 
 return HealthPickupService

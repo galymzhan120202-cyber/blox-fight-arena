@@ -215,11 +215,21 @@ local function tuneLighting(ambient: Color3, outdoorAmbient: Color3, clockTime: 
 	atmosphere.Parent = Lighting
 end
 
+local function pickupRing(radius: number, count: number): { Vector3 }
+	local points = {}
+	for index = 1, count do
+		local angle = (index / count) * math.pi * 2
+		table.insert(points, Vector3.new(math.cos(angle) * radius, 3, math.sin(angle) * radius))
+	end
+	return points
+end
+
 local ARENA_PRESETS = {}
 
 ARENA_PRESETS.Classic = {
 	DisplayName = "Классикалық",
 	Spawn = Vector3.new(0, 1, 24),
+	PickupPoints = pickupRing(25, 6),
 	Build = function()
 		local platform =
 			newAnchored("ArenaPlatform", Vector3.new(4, 120, 120), CFrame.new(0, -2, 0) * CFrame.Angles(0, 0, math.rad(90)), Enum.Material.Slate, STONE_DARK)
@@ -252,6 +262,7 @@ ARENA_PRESETS.Classic = {
 ARENA_PRESETS.Lava = {
 	DisplayName = "Лава шұңқыры",
 	Spawn = Vector3.new(0, 1, 27),
+	PickupPoints = pickupRing(24, 7), -- 7 нүкте (5 вентильден басқа бұрышта) күйіп қалмас үшін
 	Build = function()
 		local platform =
 			newAnchored("ArenaPlatform", Vector3.new(4, 64, 64), CFrame.new(0, -2, 0) * CFrame.Angles(0, 0, math.rad(90)), Enum.Material.Basalt, Color3.fromRGB(35, 30, 32))
@@ -275,6 +286,13 @@ ARENA_PRESETS.Lava = {
 ARENA_PRESETS.SkyIslands = {
 	DisplayName = "Аспан аралдары",
 	Spawn = Vector3.new(0, 1, 0),
+	PickupPoints = {
+		Vector3.new(0, 3, 0),
+		Vector3.new(0, 3, 34),
+		Vector3.new(34, 3, 0),
+		Vector3.new(0, 3, -34),
+		Vector3.new(-34, 3, 0),
+	}, -- аралдардың нақты орталықтары — олқы кеңістікке түспес үшін
 	Build = function()
 		newAnchored("IslandCenter", Vector3.new(22, 3, 22), CFrame.new(0, -1.5, 0), Enum.Material.Slate, STONE_DARK)
 
@@ -299,6 +317,7 @@ ARENA_PRESETS.SkyIslands = {
 ARENA_PRESETS.Frozen = {
 	DisplayName = "Мұзды құрсау",
 	Spawn = Vector3.new(0, 1, 30),
+	PickupPoints = pickupRing(27, 6),
 	Build = function()
 		local platform = newAnchored("ArenaPlatform", Vector3.new(70, 4, 70), CFrame.new(0, -2, 0), Enum.Material.Ice, ICE_COLOR)
 		platform.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.02, 0.5)
@@ -326,8 +345,22 @@ local function teleportAllPlayers(spawnPosition: Vector3)
 	end
 end
 
+local changeListeners = {}
+
 function ArenaService.GetCurrent(): string
 	return currentArena
+end
+
+function ArenaService.GetPickupPoints(): { Vector3 }
+	local preset = ARENA_PRESETS[currentArena]
+	return (preset and preset.PickupPoints) or { Vector3.new(0, 3, 0) }
+end
+
+-- Арена ауысқанда хабардар болғысы келетін сервистер (мыс. HP/Coin pickups)
+-- осы арқылы тіркеледі — олар ArenaService-ті require етеді, ArenaService оларды
+-- require етпейді, сондықтан циклдік тәуелділік болмайды.
+function ArenaService.OnChanged(callback: (string) -> ())
+	table.insert(changeListeners, callback)
 end
 
 function ArenaService.SetArena(name: string): boolean
@@ -346,6 +379,10 @@ function ArenaService.SetArena(name: string): boolean
 	currentArena = name
 	ArenaChangedEvent:FireAllClients(name)
 	print(string.format("[Arena] Ауыстырылды: %s", preset.DisplayName))
+
+	for _, callback in changeListeners do
+		task.spawn(callback, name)
+	end
 
 	return true
 end

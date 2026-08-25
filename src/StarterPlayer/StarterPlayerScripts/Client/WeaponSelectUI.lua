@@ -38,6 +38,8 @@ function WeaponSelectUI.Init()
 	WeaponChangedEvent.OnClientEvent:Connect(function(weaponName: string)
 		refreshHighlight(weaponName)
 	end)
+
+	refreshHighlight("Sword")
 end
 
 return WeaponSelectUI
