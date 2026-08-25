@@ -3,6 +3,7 @@ return {
 		TabGame = "Ойын",
 		TabShop = "Дүкен",
 
+		StartSectionTitle = "Ойынды бастау",
 		RoundStart = "Раундты бастау",
 		RoundStop = "Раунд жүріп жатыр — тоқтату",
 
@@ -68,6 +69,7 @@ return {
 		TabGame = "Игра",
 		TabShop = "Магазин",
 
+		StartSectionTitle = "Начать игру",
 		RoundStart = "Начать раунд",
 		RoundStop = "Раунд идёт — остановить",
 
