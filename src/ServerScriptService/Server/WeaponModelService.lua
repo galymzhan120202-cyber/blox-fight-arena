@@ -1,5 +1,8 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
+
+local WeaponSkinsDatabase = require(ReplicatedStorage.Modules.Data.WeaponSkinsDatabase)
 
 local VISUAL_MODEL_NAME = "WeaponVisual"
 local ARROW_VISUAL_NAME = "ArrowVisual"
@@ -195,7 +198,36 @@ local function removeExistingWeapon(player: Player, character: Model)
 	end
 end
 
-function WeaponModelService.Equip(player: Player, character: Model, weaponName: string)
+local function findSkin(skinId: string?)
+	if not skinId then
+		return nil
+	end
+	for _, skin in WeaponSkinsDatabase do
+		if skin.Id == skinId then
+			return skin
+		end
+	end
+	return nil
+end
+
+local function applySkin(tool: Tool, skinId: string?)
+	local skin = findSkin(skinId)
+	if not skin or not skin.Color then
+		return
+	end
+
+	for _, part in tool:GetDescendants() do
+		if part:IsA("BasePart") then
+			part.Color = skin.Color
+			if skin.Material then
+				part.Material = skin.Material
+			end
+		end
+	end
+end
+
+-- skinId берілмесе (немесе "Default" болса), қару өз әдепкі түсінде қалады.
+function WeaponModelService.Equip(player: Player, character: Model, weaponName: string, skinId: string?)
 	removeExistingWeapon(player, character)
 
 	local builder = WEAPON_BUILDERS[weaponName]
@@ -210,6 +242,7 @@ function WeaponModelService.Equip(player: Player, character: Model, weaponName: 
 	tool.Name = VISUAL_MODEL_NAME
 	tool.RequiresHandle = true
 	tool.CanBeDropped = false
+	tool:SetAttribute("WeaponName", weaponName)
 
 	grip.Name = "Handle"
 	grip.Parent = tool
@@ -221,6 +254,7 @@ function WeaponModelService.Equip(player: Player, character: Model, weaponName: 
 	end
 
 	model:Destroy()
+	applySkin(tool, skinId)
 
 	tool.Grip = CFrame.new(0, -(grip.Size.Y / 2) + 0.2, 0) * CFrame.Angles(math.rad(90), 0, 0)
 	tool.Parent = player:FindFirstChildOfClass("Backpack")

@@ -11,6 +11,7 @@ return {
 
 		WeaponShopTitle = "Қару дүкені",
 		WeaponStatFormat = "%s (Зақым %d, Қашықтық %d, DPS %.1f)",
+		WeaponSkinsSectionTitle = "Қару скиндері",
 
 		WeaponModeTitle = "Қару режимі",
 		WeaponModeRandom = "Random (авто ауысады)",
@@ -77,6 +78,7 @@ return {
 
 		WeaponShopTitle = "Магазин оружия",
 		WeaponStatFormat = "%s (Урон %d, Дальность %d, DPS %.1f)",
+		WeaponSkinsSectionTitle = "Скины оружия",
 
 		WeaponModeTitle = "Режим оружия",
 		WeaponModeRandom = "Random (авто смена)",

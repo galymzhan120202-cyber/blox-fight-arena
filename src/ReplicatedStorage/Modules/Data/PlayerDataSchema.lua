@@ -9,4 +9,6 @@ return {
 	EquippedSkin = "Default",
 	ClanName = nil,
 	Language = "kk",
+	OwnedWeaponSkins = {},
+	EquippedWeaponSkins = {},
 }

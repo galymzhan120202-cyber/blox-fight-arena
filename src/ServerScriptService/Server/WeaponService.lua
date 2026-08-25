@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local WeaponDatabase = require(ReplicatedStorage.Modules.Data.WeaponDatabase)
 local WeaponModelService = require(script.Parent.WeaponModelService)
+local WeaponSkinService = require(script.Parent.WeaponSkinService)
 local AdminService = require(script.Parent.AdminService)
 
 local RANDOMIZER_INTERVAL = 40
@@ -44,7 +45,8 @@ local function setWeapon(player: Player, weaponName: string)
 	WeaponChangedEvent:FireClient(player, weaponName)
 
 	if player.Character then
-		WeaponModelService.Equip(player, player.Character, weaponName)
+		local skinId = WeaponSkinService.GetEquippedSkinId(player, weaponName)
+		WeaponModelService.Equip(player, player.Character, weaponName, skinId)
 	end
 end
 
@@ -108,7 +110,8 @@ local function onPlayerAdded(player: Player)
 			resetToClassDefault(player)
 		else
 			WeaponChangedEvent:FireClient(player, playerWeapons[player])
-			WeaponModelService.Equip(player, character, playerWeapons[player])
+			local skinId = WeaponSkinService.GetEquippedSkinId(player, playerWeapons[player])
+			WeaponModelService.Equip(player, character, playerWeapons[player], skinId)
 		end
 	end)
 end
