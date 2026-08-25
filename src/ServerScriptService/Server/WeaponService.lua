@@ -15,6 +15,7 @@ local CLASS_DEFAULT_WEAPON = {
 }
 
 local SelectClassEvent = ReplicatedStorage.RemoteEvents:WaitForChild("SelectClass")
+local SelectWeaponEvent = ReplicatedStorage.RemoteEvents:WaitForChild("SelectWeapon")
 local WeaponChangedEvent = ReplicatedStorage.RemoteEvents:WaitForChild("WeaponChanged")
 local SetGameModeEvent = ReplicatedStorage.RemoteEvents:WaitForChild("SetGameMode")
 local GameModeChangedEvent = ReplicatedStorage.RemoteEvents:WaitForChild("GameModeChanged")
@@ -53,6 +54,18 @@ local function resetToClassDefault(player: Player)
 	if defaultWeapon then
 		setWeapon(player, defaultWeapon)
 	end
+end
+
+-- Классқа тәуелсіз, тегін қару таңдау (дүкен-стиль UI). Раунд құлыпталғанда
+-- (RoundService active) немесе Bot/Boss/Random режимнің өз логикасымен қайшы келгенде
+-- де жай ғана қабылданбайды — класс таңдаудағыдай locked flag-ты пайдаланады.
+function WeaponService.SelectWeapon(player: Player, weaponName: string): boolean
+	if locked or not WeaponDatabase[weaponName] then
+		return false
+	end
+
+	setWeapon(player, weaponName)
+	return true
 end
 
 function WeaponService.GetPlayerWeapon(player: Player)
@@ -123,6 +136,12 @@ function WeaponService.Init()
 
 		playerClassName[player] = className
 		setWeapon(player, CLASS_DEFAULT_WEAPON[className])
+	end)
+
+	SelectWeaponEvent.OnServerEvent:Connect(function(player, weaponName)
+		if typeof(weaponName) == "string" then
+			WeaponService.SelectWeapon(player, weaponName)
+		end
 	end)
 
 	SetGameModeEvent.OnServerEvent:Connect(function(player, mode)
