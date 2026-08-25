@@ -8,6 +8,7 @@ local LevelCurve = require(ReplicatedStorage.Modules.Data.LevelCurve)
 local NotificationService = require(script.Parent.NotificationService)
 
 local SAVE_RETRIES = 3
+local XP_TO_RP_RATIO = 0.5 -- шайқаста жиналған XP-тің жартысы рейтинг ұпайына (RP) да қосылады
 
 local PlayerDataService = {}
 
@@ -99,7 +100,9 @@ function PlayerDataService.AddXP(player: Player, amount: number)
 	data.XP += amount
 	local newLevel = LevelCurve.LevelFromXP(data.XP)
 
-	print(string.format("[XP] %s +%d XP (барлығы: %d)", player.Name, amount, data.XP))
+	data.RankPoints += math.floor(amount * XP_TO_RP_RATIO)
+
+	print(string.format("[XP] %s +%d XP (барлығы: %d, RP: %d)", player.Name, amount, data.XP, data.RankPoints))
 
 	if newLevel > oldLevel then
 		print(string.format("[Level Up] %s деңгейі: %d", player.Name, newLevel))

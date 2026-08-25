@@ -30,6 +30,13 @@ local BossService = {}
 local activeBoss = nil :: { model: Model, humanoid: Humanoid }?
 local desiredActive = false
 local nextSpawnAllowedAt = 0
+local participants = {}
+
+-- Тек боссқа НАҚТЫ соққы берген ойыншылар сыйақы алады (CombatService шақырады) —
+-- сервердегі барлық ойыншыға емес, әйтпесе ойнамай тұрған адам да тегін XP/Coins алады.
+function BossService.RecordParticipant(player: Player)
+	participants[player] = true
+end
 
 local function weldTo(base: BasePart, part: BasePart)
 	local weld = Instance.new("WeldConstraint")
@@ -264,14 +271,26 @@ local function despawnBoss(awardXP: boolean)
 	activeBoss = nil
 
 	if awardXP then
-		for _, player in Players:GetPlayers() do
-			PlayerDataService.AddXP(player, DEFEAT_XP_REWARD)
-			PlayerDataService.AddCoins(player, DEFEAT_COIN_REWARD)
+		local rewardedCount = 0
+		for player in participants do
+			if player.Parent then
+				PlayerDataService.AddXP(player, DEFEAT_XP_REWARD)
+				PlayerDataService.AddCoins(player, DEFEAT_COIN_REWARD)
+				rewardedCount += 1
+			end
 		end
-		print(string.format("[Boss] ArenaBoss жеңілді! Барлық ойыншыға +%d XP, +%d Coins.", DEFEAT_XP_REWARD, DEFEAT_COIN_REWARD))
-		HighlightService.Log("Boss жеңілді", string.format("%d ойыншы бірігіп ArenaBoss-ты жеңді", #Players:GetPlayers()))
+		print(
+			string.format(
+				"[Boss] ArenaBoss жеңілді! Соққы берген %d ойыншыға +%d XP, +%d Coins.",
+				rewardedCount,
+				DEFEAT_XP_REWARD,
+				DEFEAT_COIN_REWARD
+			)
+		)
+		HighlightService.Log("Boss жеңілді", string.format("%d ойыншы бірігіп ArenaBoss-ты жеңді", rewardedCount))
 	end
 
+	participants = {}
 	boss.model:Destroy()
 end
 

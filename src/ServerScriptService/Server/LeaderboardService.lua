@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local PlayerDataService = require(script.Parent.PlayerDataService)
+local RankTiers = require(ReplicatedStorage.Modules.Data.RankTiers)
 
 local UPDATE_INTERVAL = 60
 
@@ -89,7 +90,16 @@ function LeaderboardService.Init()
 	Players.PlayerRemoving:Connect(updateEntry)
 
 	RequestLeaderboardEvent.OnServerEvent:Connect(function(player)
-		LeaderboardDataEvent:FireClient(player, LeaderboardService.GetTopPlayers(10))
+		local ownData = PlayerDataService.Get(player)
+		local ownRankPoints = ownData and ownData.RankPoints or 0
+
+		LeaderboardDataEvent:FireClient(player, {
+			Top = LeaderboardService.GetTopPlayers(10),
+			You = {
+				RankPoints = ownRankPoints,
+				Tier = RankTiers.GetTier(ownRankPoints),
+			},
+		})
 	end)
 
 	task.spawn(function()

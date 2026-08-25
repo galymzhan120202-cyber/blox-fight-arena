@@ -11,6 +11,7 @@ local NotificationService = require(script.Parent.NotificationService)
 local HighlightService = require(script.Parent.HighlightService)
 local MonetizationService = require(script.Parent.MonetizationService)
 local RoundService = require(script.Parent.RoundService)
+local BossService = require(script.Parent.BossService)
 
 local DAMAGEABLE_TAG = "Damageable"
 local HIT_XP = 10
@@ -144,6 +145,10 @@ local function onUseAbility(player: Player)
 		humanoid:TakeDamage(weapon.Damage)
 		AttackHitEvent:FireAllClients(targetModel, weapon.Damage)
 		applyKnockback(otherRoot, rootPart)
+
+		if CollectionService:HasTag(targetModel, "Boss") then
+			BossService.RecordParticipant(player)
+		end
 
 		PlayerDataService.AddXP(player, MonetizationService.ApplyVipMultiplier(HIT_XP, player))
 		PlayerDataService.AddCoins(player, MonetizationService.ApplyVipMultiplier(HIT_COINS, player))
