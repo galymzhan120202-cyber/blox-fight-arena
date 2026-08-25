@@ -11,7 +11,7 @@ return {
 		LoadoutLockedHint = "Раунд барысында өзгертілмейді",
 
 		WeaponSelectTitle = "Қару таңдау",
-		WeaponStatFormat = "%s (Зақым %d, Қашықтық %d, DPS %.1f)",
+		WeaponStatFormat = "DMG %d · RNG %d · DPS %.1f",
 		WeaponSkinsSectionTitle = "Қару скиндері",
 
 		WeaponModeTitle = "Қару режимі",
@@ -91,7 +91,7 @@ return {
 		LoadoutLockedHint = "Нельзя изменить во время раунда",
 
 		WeaponSelectTitle = "Выбор оружия",
-		WeaponStatFormat = "%s (Урон %d, Дальность %d, DPS %.1f)",
+		WeaponStatFormat = "DMG %d · RNG %d · DPS %.1f",
 		WeaponSkinsSectionTitle = "Скины оружия",
 
 		WeaponModeTitle = "Режим оружия",

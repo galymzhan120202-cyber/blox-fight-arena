@@ -9,7 +9,7 @@ local LoadoutLock = {}
 
 -- Класс/Қару таңдау панельдеріне ортақ "раунд барысында құлыпталған" көрінісін
 -- қосады: жоғарыда ескерту жолағы, батырмалар сұрланып, басылмай қалады.
-function LoadoutLock.Attach(holder: Frame, buttons: { [any]: TextButton })
+function LoadoutLock.Attach(holder: Frame, buttons: { [any]: TextButton }, extraLabels: { TextLabel }?)
 	local hint = Instance.new("TextLabel")
 	hint.Size = UDim2.new(1, 0, 0, 16)
 	hint.BackgroundTransparency = 1
@@ -31,6 +31,12 @@ function LoadoutLock.Attach(holder: Frame, buttons: { [any]: TextButton })
 			button.Active = not locked
 			button.BackgroundTransparency = locked and 0.55 or 0
 			button.TextTransparency = locked and 0.5 or 0
+		end
+
+		if extraLabels then
+			for _, label in extraLabels do
+				label.TextTransparency = locked and 0.5 or 0
+			end
 		end
 	end
 
