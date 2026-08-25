@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local MenuUI = require(script.Parent.MenuUI)
 local Localization = require(script.Parent.Localization)
+local LoadoutLock = require(script.Parent.LoadoutLock)
 local WeaponDatabase = require(ReplicatedStorage.Modules.Data.WeaponDatabase)
 
 local SelectWeaponEvent = ReplicatedStorage.RemoteEvents:WaitForChild("SelectWeapon")
@@ -12,7 +13,7 @@ local WEAPON_ORDER = { "Sword", "Bow", "Staff", "Daggers", "Hammer", "Spear" }
 local WeaponSelectUI = {}
 
 function WeaponSelectUI.Init()
-	local holder, titleLabel = MenuUI.AddSection(Localization.Get("WeaponShopTitle"), "Дүкен")
+	local holder, titleLabel = MenuUI.AddSection(Localization.Get("WeaponSelectTitle"))
 	local buttons = {}
 
 	local function refreshHighlight(selected: string)
@@ -42,9 +43,10 @@ function WeaponSelectUI.Init()
 	end)
 
 	refreshHighlight("Sword")
+	LoadoutLock.Attach(holder, buttons)
 
 	Localization.OnChanged(function()
-		titleLabel.Text = string.upper(Localization.Get("WeaponShopTitle"))
+		titleLabel.Text = string.upper(Localization.Get("WeaponSelectTitle"))
 		for _, weaponName in WEAPON_ORDER do
 			applyButtonText(weaponName)
 		end

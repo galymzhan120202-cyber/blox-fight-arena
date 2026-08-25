@@ -14,17 +14,20 @@ function LeaderboardUI.Init()
 	local holder, titleLabel = MenuUI.AddSection(Localization.Get("LeaderboardTitle"), "Дүкен")
 
 	local youLabel = Instance.new("TextLabel")
-	youLabel.Size = UDim2.new(1, 0, 0, 18)
+	youLabel.Size = UDim2.new(1, 0, 0, 0)
+	youLabel.AutomaticSize = Enum.AutomaticSize.Y
 	youLabel.BackgroundTransparency = 1
 	youLabel.Font = Theme.TitleFont
 	youLabel.TextSize = 13
 	youLabel.TextColor3 = Theme.Accent
 	youLabel.TextXAlignment = Enum.TextXAlignment.Left
+	youLabel.TextWrapped = true
 	youLabel.Text = "—"
 	youLabel.LayoutOrder = -1
 	youLabel.Parent = holder
 
 	local refreshButton = MenuUI.CreateButton(holder, Localization.Get("LeaderboardRefresh"))
+	refreshButton.LayoutOrder = 0
 
 	local listLabel = Instance.new("TextLabel")
 	listLabel.Size = UDim2.new(1, 0, 0, 0)
@@ -36,6 +39,7 @@ function LeaderboardUI.Init()
 	listLabel.TextXAlignment = Enum.TextXAlignment.Left
 	listLabel.TextYAlignment = Enum.TextYAlignment.Top
 	listLabel.TextWrapped = true
+	listLabel.LayoutOrder = 1
 	listLabel.Text = Localization.Get("LeaderboardLoading")
 	listLabel.Parent = holder
 

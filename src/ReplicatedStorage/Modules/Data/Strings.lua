@@ -8,8 +8,9 @@ return {
 		RoundStop = "Раунд жүріп жатыр — тоқтату",
 
 		ClassSectionTitle = "Класс",
+		LoadoutLockedHint = "Раунд барысында өзгертілмейді",
 
-		WeaponShopTitle = "Қару дүкені",
+		WeaponSelectTitle = "Қару таңдау",
 		WeaponStatFormat = "%s (Зақым %d, Қашықтық %d, DPS %.1f)",
 		WeaponSkinsSectionTitle = "Қару скиндері",
 
@@ -87,8 +88,9 @@ return {
 		RoundStop = "Раунд идёт — остановить",
 
 		ClassSectionTitle = "Класс",
+		LoadoutLockedHint = "Нельзя изменить во время раунда",
 
-		WeaponShopTitle = "Магазин оружия",
+		WeaponSelectTitle = "Выбор оружия",
 		WeaponStatFormat = "%s (Урон %d, Дальность %d, DPS %.1f)",
 		WeaponSkinsSectionTitle = "Скины оружия",
 

@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local MenuUI = require(script.Parent.MenuUI)
 local Localization = require(script.Parent.Localization)
+local LoadoutLock = require(script.Parent.LoadoutLock)
 
 local SelectClassEvent = ReplicatedStorage.RemoteEvents:WaitForChild("SelectClass")
 
@@ -30,6 +31,7 @@ function ClassSelectUI.Init()
 	end
 
 	refreshHighlight("Warrior")
+	LoadoutLock.Attach(holder, buttons)
 
 	Localization.OnChanged(function()
 		titleLabel.Text = string.upper(Localization.Get("ClassSectionTitle"))
