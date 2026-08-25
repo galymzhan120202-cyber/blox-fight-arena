@@ -15,12 +15,14 @@ function ClanUI.Init()
 	local holder, titleLabel = MenuUI.AddSection(Localization.Get("ClanSectionTitle"), "Дүкен")
 
 	local statusLabel = Instance.new("TextLabel")
-	statusLabel.Size = UDim2.new(1, 0, 0, 18)
+	statusLabel.Size = UDim2.new(1, 0, 0, 0)
+	statusLabel.AutomaticSize = Enum.AutomaticSize.Y
 	statusLabel.BackgroundTransparency = 1
 	statusLabel.Font = Theme.BodyFont
 	statusLabel.TextSize = 13
 	statusLabel.TextColor3 = Theme.MutedText
 	statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+	statusLabel.TextWrapped = true
 	statusLabel.Text = Localization.Get("ClanNone")
 	statusLabel.Parent = holder
 

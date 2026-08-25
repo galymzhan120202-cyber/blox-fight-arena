@@ -53,13 +53,22 @@ function NotificationUI.Init()
 	local function showToast(text: string, color: Color3?)
 		local label = Instance.new("TextLabel")
 		label.Size = UDim2.new(1, 0, 0, 34)
+		label.AutomaticSize = Enum.AutomaticSize.Y
 		label.BackgroundColor3 = Theme.Background
 		label.BackgroundTransparency = 0.1
 		label.TextColor3 = color or Theme.Accent
 		label.Font = Theme.TitleFont
 		label.TextSize = 16
+		label.TextWrapped = true
 		label.Text = text
 		label.Parent = toastHolder
+
+		local padding = Instance.new("UIPadding")
+		padding.PaddingTop = UDim.new(0, 4)
+		padding.PaddingBottom = UDim.new(0, 4)
+		padding.PaddingLeft = UDim.new(0, 8)
+		padding.PaddingRight = UDim.new(0, 8)
+		padding.Parent = label
 
 		local corner = Instance.new("UICorner")
 		corner.CornerRadius = Theme.CornerRadius
@@ -80,11 +89,13 @@ function NotificationUI.Init()
 	local function showFeed(text: string)
 		local label = Instance.new("TextLabel")
 		label.Size = UDim2.new(1, 0, 0, 22)
+		label.AutomaticSize = Enum.AutomaticSize.Y
 		label.BackgroundTransparency = 1
 		label.TextColor3 = Theme.Text
 		label.TextStrokeTransparency = 0.5
 		label.Font = Theme.BodyFont
 		label.TextSize = 14
+		label.TextWrapped = true
 		label.TextXAlignment = Enum.TextXAlignment.Right
 		label.Text = text
 		label.Parent = feedHolder

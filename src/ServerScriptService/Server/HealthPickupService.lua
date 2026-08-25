@@ -3,6 +3,7 @@ local Workspace = game:GetService("Workspace")
 
 local NotificationService = require(script.Parent.NotificationService)
 local ArenaService = require(script.Parent.ArenaService)
+local RoundService = require(script.Parent.RoundService)
 
 local PICKUP_COUNT = 3
 local HEAL_AMOUNT = 35
@@ -58,7 +59,7 @@ spawnPickup = function()
 	local claimed = false
 
 	part.Touched:Connect(function(hit)
-		if claimed then
+		if claimed or not RoundService.IsActive() then
 			return
 		end
 

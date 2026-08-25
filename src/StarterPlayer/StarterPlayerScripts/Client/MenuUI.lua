@@ -170,13 +170,22 @@ end
 function MenuUI.CreateButton(parent: Frame, text: string): TextButton
 	local button = Instance.new("TextButton")
 	button.Size = UDim2.new(1, 0, 0, 32)
+	button.AutomaticSize = Enum.AutomaticSize.Y
 	button.BackgroundColor3 = Theme.Idle
 	button.TextColor3 = Theme.Text
 	button.Font = Theme.BodyFont
 	button.TextSize = 15
+	button.TextWrapped = true
 	button.Text = text
 	button.AutoButtonColor = false
 	button.Parent = parent
+
+	local padding = Instance.new("UIPadding")
+	padding.PaddingTop = UDim.new(0, 7)
+	padding.PaddingBottom = UDim.new(0, 7)
+	padding.PaddingLeft = UDim.new(0, 6)
+	padding.PaddingRight = UDim.new(0, 6)
+	padding.Parent = button
 
 	local corner = Instance.new("UICorner")
 	corner.CornerRadius = Theme.CornerRadius
