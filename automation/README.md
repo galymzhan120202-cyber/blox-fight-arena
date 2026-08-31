@@ -35,6 +35,7 @@ GitHub Actions Roblox клиентін іске қосып, экранды жа�
 |---|---|---|
 | `YOUTUBE_TOKEN_JSON` | Secret | `youtube_token.json` файлының толық мазмұны |
 | `GAME_LINK` | Variable | Roblox ойынының сілтемесі |
+| `YOUTUBE_PRIVACY` | Variable | `public` / `unlisted` / `private` — бос болса `public` (міндетті емес) |
 | `TELEGRAM_BOT_TOKEN` | Secret | Telegram бот токені (міндетті емес — хабарландыру үшін) |
 | `TELEGRAM_CHAT_ID` | Secret | Хабарлама жіберілетін chat/user ID (міндетті емес) |
 

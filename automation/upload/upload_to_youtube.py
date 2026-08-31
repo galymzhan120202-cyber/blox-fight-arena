@@ -7,6 +7,7 @@
 Қажет орта айнымалылары (GitHub Secrets/Variables):
   YOUTUBE_TOKEN_JSON   (get_youtube_token.py шығарған youtube_token.json мазмұны)
   GAME_LINK            (Roblox ойын сілтемесі, сипаттамаға қосылады)
+  YOUTUBE_PRIVACY      (public/unlisted/private — бос болса "public", міндетті емес)
   TELEGRAM_BOT_TOKEN   (Telegram бот токені — жүктеу нәтижесі туралы хабарлау үшін, міндетті емес)
   TELEGRAM_CHAT_ID     (хабарлама жіберілетін chat/user ID, міндетті емес)
 
@@ -29,6 +30,10 @@ CLIPS_DIR = Path(__file__).parent / "clips"
 UPLOADED_LOG = Path(__file__).parent / "uploaded.json"
 TOKEN_FILE = Path(__file__).parent / "youtube_token.json"
 GAME_LINK = os.environ.get("GAME_LINK", "")
+VALID_PRIVACY = {"public", "unlisted", "private"}
+PRIVACY_STATUS = (os.environ.get("YOUTUBE_PRIVACY") or "public").strip().lower()
+if PRIVACY_STATUS not in VALID_PRIVACY:
+    PRIVACY_STATUS = "public"
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
@@ -88,7 +93,7 @@ def upload_clip(youtube, clip_path: Path) -> None:
             "categoryId": "20",  # Gaming
         },
         "status": {
-            "privacyStatus": "public",
+            "privacyStatus": PRIVACY_STATUS,
             "selfDeclaredMadeForKids": False,
         },
     }
@@ -101,8 +106,10 @@ def upload_clip(youtube, clip_path: Path) -> None:
         _, response = request.next_chunk()
 
     video_url = f"https://youtu.be/{response['id']}"
-    print(f"[Upload] {clip_path.name} -> {video_url}")
-    notify_telegram(f"✅ Жаңа Shorts жүктелді!\n{title}\n{video_url}")
+    print(f"[Upload] {clip_path.name} -> {video_url} ({PRIVACY_STATUS})")
+    notify_telegram(
+        f"✅ Жаңа Shorts жүктелді! ({PRIVACY_STATUS})\n{title}\n{video_url}"
+    )
 
 
 def main() -> None:

@@ -1,4 +1,3 @@
 automation/upload/client_secrets.json
 automation/upload/youtube_token.json
-automation/upload/clips/*.mp4
 .claude/
