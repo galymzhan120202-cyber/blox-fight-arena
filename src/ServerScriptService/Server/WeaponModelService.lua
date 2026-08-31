@@ -185,6 +185,16 @@ local WEAPON_BUILDERS = {
 	Spear = buildSpear,
 }
 
+-- Tool/Backpack жүйесінсіз тек қару моделін қайтарады (PrimaryPart = "Grip").
+-- Боттар (BotService) осыны қолына Motor6D-мен дәнекерлейді.
+function WeaponModelService.BuildDetached(weaponName: string): Model?
+	local builder = WEAPON_BUILDERS[weaponName]
+	if not builder then
+		return nil
+	end
+	return builder()
+end
+
 local function removeExistingWeapon(player: Player, character: Model)
 	local equipped = character:FindFirstChild(VISUAL_MODEL_NAME)
 	if equipped then

@@ -15,9 +15,15 @@ local RoundService = {}
 local roundActive = false
 local roundStartKills = {}
 local getBotCount: (() -> number)?
+local changedCallbacks: { (boolean) -> () } = {}
 
 function RoundService.SetBotCountProvider(fn: () -> number)
 	getBotCount = fn
+end
+
+-- Раунд күйі өзгергенде хабарланатын серверлік колбэк (клиенттік RoundChanged-тен бөлек).
+function RoundService.OnChanged(fn: (active: boolean) -> ())
+	table.insert(changedCallbacks, fn)
 end
 
 local function announceMvp()
@@ -54,6 +60,10 @@ function RoundService.SetActive(active: boolean)
 	ClassService.SetLocked(active)
 	WeaponService.SetLocked(active)
 	RoundChangedEvent:FireAllClients(active)
+
+	for _, fn in changedCallbacks do
+		task.spawn(fn, active)
+	end
 
 	if active then
 		roundStartKills = {}

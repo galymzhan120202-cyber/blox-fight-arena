@@ -73,6 +73,34 @@ local function showDamageNumber(targetModel: Model, damage: number)
 	tween:Play()
 end
 
+local function spark(targetModel: Model)
+	local rootPart = targetModel:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if not rootPart then
+		return
+	end
+
+	local burst = Instance.new("Part")
+	burst.Shape = Enum.PartType.Ball
+	burst.Size = Vector3.new(1.4, 1.4, 1.4)
+	burst.CFrame = rootPart.CFrame * CFrame.new(0, math.random(-8, 8) / 10, -0.6)
+	burst.Anchored = true
+	burst.CanCollide = false
+	burst.CanQuery = false
+	burst.Material = Enum.Material.Neon
+	burst.Color = Color3.fromRGB(255, 220, 130)
+	burst.Parent = Workspace
+
+	local tween = TweenService:Create(
+		burst,
+		TweenInfo.new(0.16, Enum.EasingStyle.Quad),
+		{ Size = Vector3.new(4.5, 4.5, 4.5), Transparency = 1 }
+	)
+	tween.Completed:Connect(function()
+		burst:Destroy()
+	end)
+	tween:Play()
+end
+
 local function flashHit(targetModel: Instance, damage: number?)
 	if not targetModel or not targetModel:IsA("Model") then
 		return
@@ -87,6 +115,8 @@ local function flashHit(targetModel: Instance, damage: number?)
 	task.delay(HIT_FLASH_TIME, function()
 		highlight:Destroy()
 	end)
+
+	spark(targetModel :: Model)
 
 	if damage then
 		showDamageNumber(targetModel :: Model, damage)
